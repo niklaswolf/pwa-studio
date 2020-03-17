@@ -148,3 +148,22 @@ test('throws when external consumer invokes a call method', async () => {
         })
     ).resolves.toBe(7);
 });
+
+test('serializes with its requestor', () => {
+    const syncHook = new SyncWaterfallHook(['x']);
+    const ownSync = new Target(
+        () => {},
+        'mockRequestor',
+        'mockTargetName',
+        'SyncBail',
+        syncHook
+    );
+    expect(ownSync.toJSON()).toBeUndefined();
+    Target.enableTracking();
+    expect(ownSync.toJSON()).toMatchObject({
+        type: 'Target',
+        id: 'mockTargetName[SyncBail]',
+        requestor: 'mockRequestor'
+    });
+    Target.disableTracking();
+});

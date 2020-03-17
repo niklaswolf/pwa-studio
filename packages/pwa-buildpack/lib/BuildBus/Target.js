@@ -7,45 +7,64 @@
  */
 const Trackable = require('./Trackable');
 
+const interceptionTypes = {
+    tap: 'sync',
+    tapAsync: 'async',
+    tapPromise: 'promise'
+};
+
 class Target extends Trackable {
     constructor(owner, requestor, targetName, tapableType, tapable) {
         super();
         this._owner = owner;
         this._tapable = tapable;
-        this._targetName = targetName;
         this._requestor = requestor;
-        this.identify(`${targetName}[${tapableType}]`, owner);
+        this.name = targetName;
+        this.identify(`${targetName}[${tapableType}]`, this._owner);
     }
     _invokeTap(method, customName, tap) {
         let interceptor = tap;
-        let tapName = this._requestor;
+        let source = this._requestor;
         if (interceptor) {
             // a custom name was passed!
-            tapName = `${this._requestor}:${customName}`;
+            source = `${this._requestor}:${customName}`;
         } else {
             interceptor = customName;
         }
-        this.track(method, {
-            requestor: this._requestor,
-            interceptor: tapName
-        });
-        return this._tapable[method](tapName, interceptor);
+        this.track('intercept', { source, type: interceptionTypes[method] });
+        return this._tapable[method](source, interceptor);
     }
     call(...args) {
-        this.track('call', ...args);
-        return this._tapable.call(...args);
+        this.track('beforeCall', { type: 'sync', args });
+        const returned = this._tapable.call(...args);
+        this.track('afterCall', { type: 'sync', returned });
+        return returned;
     }
-    callAsync(...args) {
-        this.track('callAsync', ...args);
+    callAsync(...incomingArgs) {
+        const callbackIndex = incomingArgs.length - 1;
+        const callback = incomingArgs[callbackIndex];
+        const args = incomingArgs.slice(0, callbackIndex);
+        this.track('beforeCall', { type: 'async', args });
+        args.push((...returned) => {
+            this.track('afterCall', { type: 'async', returned });
+            callback(...returned);
+        });
         return this._tapable.callAsync(...args);
     }
     intercept(options) {
-        this.track('tapableIntercept', options);
+        this.track('intercept', {
+            type: 'intercept',
+            source: this._requestor,
+            options
+        });
         return this._tapable.intercept(options);
     }
     promise(...args) {
-        this.track('promise', ...args);
-        return this._tapable.promise(...args);
+        this.track('beforeCall', { type: 'promise', args });
+        return this._tapable.promise(...args).then(returned => {
+            this.track('afterCall', { type: 'promise', returned });
+            return returned;
+        });
     }
     tap(name, interceptor) {
         return this._invokeTap('tap', name, interceptor);
@@ -56,14 +75,23 @@ class Target extends Trackable {
     tapPromise(name, interceptor) {
         return this._invokeTap('tapPromise', name, interceptor);
     }
+    toJSON() {
+        const json = super.toJSON();
+        if (json) {
+            json.requestor = this._requestor;
+        }
+        return json;
+    }
 }
 
 Target.External = class ExternalTarget extends Target {
     _throwOnExternalInvoke(method) {
         throw new Error(
-            `${this._requestor} ran targets.of("${this._owner}").${
-                this._targetName
-            }.${method}(). Only ${this.owner} can invoke its own targets. ${
+            `${this._requestor} ran targets.of("${this._owner.name}").${
+                this.name
+            }.${method}(). Only ${
+                this._owner.name
+            } can invoke its own targets. ${
                 this._requestor
             } can only intercept them.`
         );

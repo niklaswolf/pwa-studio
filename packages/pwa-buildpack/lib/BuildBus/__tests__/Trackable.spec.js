@@ -1,3 +1,4 @@
+const { inspect } = require('util');
 const Trackable = require('../Trackable');
 
 const logFn = jest.fn().mockName('console.log');
@@ -22,19 +23,17 @@ test('switches in and out of live mode', () => {
         type: 'Trackable',
         id: 'foo'
     });
-    expect(() => trackable.track('woo', ['yay'])).not.toThrow();
+    expect(() => trackable.track('woo', 'yay')).not.toThrow();
     expect(logFn).toHaveBeenCalledWith(
         expect.objectContaining({
-            origin: {
-                type: 'Trackable',
-                id: 'foo'
-            },
-            event: 'woo',
-            args: [['yay']]
-        })
+            type: 'Trackable',
+            id: 'foo'
+        }),
+        'woo',
+        'yay'
     );
     Trackable.disableTracking();
-    expect(() => trackable.track('aah', ['no'])).not.toThrow();
+    expect(() => trackable.track('aah', 'no')).not.toThrow();
     expect(logFn).toHaveBeenCalledTimes(1);
 });
 
@@ -60,55 +59,73 @@ test('recursively builds origin object from parents', () => {
     grandparent.track('die', { age: 969 });
     expect(logFn).toHaveBeenCalledWith(
         expect.objectContaining({
-            origin: {
-                type: 'OldGuy',
-                id: 'methuselah'
-            },
-            event: 'die',
-            args: [{ age: 969 }]
-        })
+            type: 'OldGuy',
+            id: 'methuselah'
+        }),
+        'die',
+        { age: 969 }
     );
 
     parent.track('beget', 'sons', 'daughters');
 
     expect(logFn).toHaveBeenCalledWith(
         expect.objectContaining({
-            origin: {
-                type: 'Patriarch',
-                id: 'lamech',
-                parent: {
-                    type: 'OldGuy',
-                    id: 'methuselah'
-                }
-            },
-            event: 'beget',
-            args: ['sons', 'daughters']
-        })
+            type: 'Patriarch',
+            id: 'lamech',
+            parent: {
+                type: 'OldGuy',
+                id: 'methuselah'
+            }
+        }),
+        'beget',
+        'sons',
+        'daughters'
     );
 
     child.track('measure', { cubits: 300 });
 
     expect(logFn).toHaveBeenCalledWith(
         expect.objectContaining({
-            origin: {
-                type: 'Zookeeper',
-                id: 'noah',
-                norseName: 'Bergelmir',
+            type: 'Zookeeper',
+            id: 'noah',
+            norseName: 'Bergelmir',
+            parent: {
+                type: 'Patriarch',
+                id: 'lamech',
                 parent: {
-                    type: 'Patriarch',
-                    id: 'lamech',
-                    parent: {
-                        type: 'OldGuy',
-                        id: 'methuselah'
-                    }
+                    type: 'OldGuy',
+                    id: 'methuselah'
                 }
-            },
-            event: 'measure',
-            args: [{ cubits: 300 }]
-        })
+            }
+        }),
+        'measure',
+        { cubits: 300 }
     );
 
     Trackable.disableTracking();
+});
+
+test('limits visual recursion in util.inspect', () => {
+    class Wood extends Trackable {}
+    const tree = new Wood();
+    const branch = new Wood();
+    const twig = new Wood();
+    const leaf = new Wood();
+    tree.identify('tree', (origin, ...args) =>
+        logFn(inspect(origin, { depth: 1 }), ...args)
+    );
+    branch.identify('branch', tree);
+    twig.identify('twig', branch);
+    leaf.identify('leaf', twig);
+    Trackable.enableTracking();
+    leaf.track('wind');
+    Trackable.disableTracking();
+    expect(logFn).toHaveBeenCalledWith(
+        expect.stringContaining('Wood<branch>'),
+        'wind'
+    );
+    const printed = logFn.mock.calls[0][0];
+    expect(printed).not.toMatch('tree');
 });
 
 test('errors if tracking enabled but this trackable was not identified', () => {

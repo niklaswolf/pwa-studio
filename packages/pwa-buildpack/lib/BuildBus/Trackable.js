@@ -1,30 +1,34 @@
+const { inspect } = require('util');
+
+const inspectable = {
+    [inspect.custom](depth, options) {
+        if (depth < 0) {
+            return options.stylize(this.toString(), 'special');
+        }
+        return this;
+    },
+    toString() {
+        return `${this.type}<${this.id}>`;
+    }
+};
+
 const liveMethods = {
     toJSON() {
-        if (!this.hasOwnProperty('_identifier')) {
-            throw new Error(
-                'Trackable must be initialized with tracker.identify'
-            );
-        }
-        const json = {
-            type: this.constructor.name,
-            id: this._identifier
-        };
+        const json = Object.create(inspectable);
+        json.type = this.constructor.name;
+        json.id = this._ensureIdentifier();
         if (this._parent) {
             json.parent = this._parent.toJSON();
         }
         return json;
     },
-    track(event, ...args) {
+    track(...args) {
         if (!this._out) {
             throw new Error(
                 'Trackable must be initialized with tracker.identify'
             );
         }
-        return this._out({
-            origin: this.toJSON(),
-            event,
-            args
-        });
+        return this._out(this.toJSON(), ...args);
     }
 };
 
@@ -39,6 +43,14 @@ class Trackable {
     }
     static disableTracking() {
         Object.assign(Trackable.prototype, deadMethods);
+    }
+    _ensureIdentifier() {
+        if (!this.hasOwnProperty('_identifier')) {
+            throw new Error(
+                'Trackable must be initialized with tracker.identify'
+            );
+        }
+        return this._identifier;
     }
     identify(identifier, owner) {
         this._identifier = identifier;
