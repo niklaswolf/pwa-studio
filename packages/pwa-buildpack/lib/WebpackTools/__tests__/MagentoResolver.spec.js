@@ -85,6 +85,18 @@ test('creates a promisifed resolver which respects provided config', async () =>
     await expect(resolver.resolve('./missing')).rejects.toThrowError();
 });
 
+test('rejects if it has been configured weird', async () => {
+    const resolver = new MagentoResolver({
+        paths: {
+            root: context
+        }
+    });
+
+    resolver._resolver = {};
+
+    await expect(resolver.resolve('./bogus')).rejects.toThrowError();
+});
+
 test('uses *.ee.js or *.ce.js depending on isEE boolean', async () => {
     const ceResolver = new MagentoResolver({
         paths: {

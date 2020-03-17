@@ -39,15 +39,21 @@ const appearsToBeHook = thing =>
 
 const getType = thing => VALID_TYPES.get(thing.constructor) || '<unknown>';
 
+/**
+ *
+ */
 class TargetProvider extends Trackable {
     constructor(bus, dep, getExternalTargets) {
         super();
         this.identify(dep.name, bus);
         this._getExternalTargets = getExternalTargets;
+        /** @type string */
         this.name = dep.name;
         this._tapables = {};
         this._intercepted = {};
+        /** @type Object<string,Hook> */
         this.own = {};
+        /** @type string */
         this.phase = null;
     }
     _linkTarget(requestorName, targetName, tapable) {
@@ -111,7 +117,10 @@ class TargetProvider extends Trackable {
             return this.own;
         }
         if (!this._intercepted[depName]) {
-            this._intercepted[depName] = this._getExternalTargets(depName);
+            this._intercepted[depName] = this._getExternalTargets(
+                this,
+                depName
+            );
         }
         return this._intercepted[depName];
     }
@@ -127,3 +136,14 @@ class TargetProvider extends Trackable {
 TargetProvider.prototype.types = types;
 
 module.exports = TargetProvider;
+
+/**
+ * Respond to a request from a {@link TargetProvider} to retrieve a different
+ * (external) TargetProvider. When using a TargetProvider disconnected from a
+ * {@link BuildBus}, this callback is necessary if anything requests external
+ * targets on the TargetProvider using {@link TargetProvider#of}.
+ * @callback getExternalTargets
+ * @param {TargetProvider} requestor - TargetProvider making the request.
+ * @param {string} requested - External targets being requested.
+ * @returns {TargetProvider} TargetProvider for the requested targets.
+ */

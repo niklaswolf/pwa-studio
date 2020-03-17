@@ -19,14 +19,25 @@ class BuildBusPlugin {
         return tag;
     }
     apply(compiler) {
-        compiler.hooks.thisCompilation.tap('BuildBusPlugin', compilation => {
-            const logger = compilation.getLogger('BuildBusPlugin');
-            const logBusTracking = (origin, eventName, details) => {
-                logger.info(eventName, this._eventOriginTag(origin), details);
-            };
-            this._trackingQueue.forEach(line => logBusTracking(...line));
-            this.bus.identify('BuildBusPlugin', logBusTracking);
-        });
+        if (this._trackingQueue) {
+            compiler.hooks.thisCompilation.tap(
+                'BuildBusPlugin',
+                compilation => {
+                    const logger = compilation.getLogger('BuildBusPlugin');
+                    const logBusTracking = (origin, eventName, details) => {
+                        logger.info(
+                            eventName,
+                            this._eventOriginTag(origin),
+                            details
+                        );
+                    };
+                    this._trackingQueue.forEach(line =>
+                        logBusTracking(...line)
+                    );
+                    this.bus.identify('BuildBusPlugin', logBusTracking);
+                }
+            );
+        }
         this.bus
             .getTargetsOf('@magento/pwa-buildpack')
             .webpackCompiler.call(compiler);

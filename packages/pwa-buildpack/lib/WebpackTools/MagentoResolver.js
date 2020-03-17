@@ -1,36 +1,35 @@
+/**
+ * Create a Webpack configuration object customized for your project.
+ * @module Buildpack/WebpackTools
+ */
+
 const fs = require('fs');
 const { CachedInputFileSystem, ResolverFactory } = require('enhanced-resolve');
 
 /**
- * @typedef {Object} CliOption
- * @property {string} name display name
- * @property {string} package npm package name
- * @property {string} binName name of the executable file
- * @property {string} alias shortcut for choice
- * @property {boolean} installed currently installed?
- * @property {boolean} recommended is recommended
- * @property {string} url homepage
- * @property {string} description description
- */
-
-/** @typedef {import("webpack/declarations/WebpackOptions").ResolveOptions} WebpackResolveOptions */
-
-/**
- * @typedef {Object} MagentoResolverOptions
- * @augments WebpackResolveOptions
+ * @typedef {Object} Buildpack/WebpackTools~MagentoResolverOptions
+ * @augments module:webpack~WebpackResolveOptions
  * @module MagentoResolver
  * @property {boolean} isEE Resolve Magento Commerce (`*.ee.js`) modules instead of Magento Open Source `*.ce.js` modules
  * @property {Object} paths Filesystem paths to resolve from
  */
 
+/**
+ * Wrapper for an
+ * [enhanced-resolver](https://github.com/webpack/enhanced-resolve/) which can
+ * resolve paths according to Webpack rules before the Webpack compiler has
+ * been constructed.
+ *
+ * @class Buildpack/WebpackTools~MagentoResolver
+ */
 class MagentoResolver {
     /**
      * Legacy method for returning Webpack `resolve` config options as before
      *
      * @deprecated Use `new MagentoResolver(options).config` instead
      * @static
-     * @param {MagentoResolverOptions} options
-     * @returns WebpackResolveOptions
+     * @param {Buildpack/WebpackTools~MagentoResolverOptions} options
+     * @returns {webpack~WebpackResolveOptions}
      */
     static async configure(options) {
         const resolver = new MagentoResolver(options);
@@ -38,7 +37,7 @@ class MagentoResolver {
     }
     /**
      *
-     * Lazy loads an EnhancedResolver instance with a cached file system,
+     * Lazy load an EnhancedResolver instance with a cached file system,
      * configured from our constructor options.
      *
      * @ignore
@@ -58,7 +57,7 @@ class MagentoResolver {
     /**
      * A MagentoResolver can asynchronously resolve `require` and `import`
      * strings the same way the built PWA will.
-     * @param {MagentoResolverOptions} options
+     * @param {Buildpack/WebpackTools~MagentoResolverOptions} options
      */
     constructor(options) {
         const { isEE, paths, ...restOptions } = options;
@@ -79,7 +78,7 @@ class MagentoResolver {
         /** @ignore */
         this._root = paths.root;
 
-        /** @type {WebpackResolveOptions} */
+        /** @type {webpack~WebpackResolveOptions} */
         this.config = {
             alias: {},
             modules: [this._root, 'node_modules'],
@@ -94,7 +93,8 @@ class MagentoResolver {
         this._requestContext = {};
     }
     /**
-     *
+     * Asynchronously resolve a path the same way Webpack would given the
+     * current configuration.
      * @async
      * @param {string} request A module name or path, as in `require('<request>')` or `import foo from '<request>'`.
      * @returns {Promise<string>} Absolute filesystem location.

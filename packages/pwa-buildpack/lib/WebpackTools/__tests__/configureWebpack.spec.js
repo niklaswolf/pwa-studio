@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const stat = jest.spyOn(fs, 'stat');
 
-const { SyncHook } = require('tapable');
+const { SyncHook, SyncWaterfallHook } = require('tapable');
 const declareBase = require('../../BuildBus/declare-base');
 const pertain = require('pertain');
 const pkgDir = require('pkg-dir');
@@ -34,7 +34,9 @@ const envVarDefsHook = new SyncHook(['envVarDefs']);
 declareBase.mockImplementation(targets => {
     targets.declare({
         envVarDefinitions: envVarDefsHook,
-        specialFeatures: specialFeaturesHook
+        specialFeatures: specialFeaturesHook,
+        webpackCompiler: new SyncHook(['compiler']),
+        wrapEsModules: new SyncWaterfallHook(['blorf'])
     });
 });
 
@@ -237,4 +239,30 @@ test('handles special flags', async () => {
     ).toBeTruthy();
     expect(declareBase).toHaveBeenCalledTimes(1);
     expect(specialFeaturesTap).toHaveBeenCalledWith(special);
+});
+
+test('accepts aliases', async () => {
+    simulate
+        .statsAsDirectory()
+        .statsAsFile()
+        .productionEnvironment();
+
+    await expect(
+        configureWebpack({
+            context: path.resolve(__dirname, '__fixtures__/resolverContext'),
+            alias: {
+                garner: 'bristow',
+                cooper: 'tippin'
+            }
+        })
+    ).resolves.toMatchObject({
+        clientConfig: {
+            resolve: {
+                alias: {
+                    garner: 'bristow',
+                    cooper: 'tippin'
+                }
+            }
+        }
+    });
 });

@@ -34,7 +34,19 @@ module.exports = targets => {
         })
     );
 
-    targets.of('@magento/pwa-buildpack').webpackCompiler.tap(compiler =>
+    const builtins = targets.of('@magento/pwa-buildpack');
+
+    builtins.specialFeatures.tap(featuresByModule => {
+        featuresByModule['@magento/venia-ui'] = {
+            cssModules: true,
+            esModules: true,
+            graphqlQueries: true,
+            rootComponents: true,
+            upward: true
+        };
+    });
+
+    builtins.webpackCompiler.tap(compiler =>
         compiler.hooks.compilation.tap(name, compilation =>
             compilation.hooks.normalModuleLoader.tap(
                 name,
