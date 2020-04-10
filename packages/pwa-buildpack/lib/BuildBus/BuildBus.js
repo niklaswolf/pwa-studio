@@ -8,11 +8,17 @@ const TargetProvider = require('./TargetProvider');
 const Trackable = require('./Trackable');
 
 /**
+ * @ignore
  * A given project root (context) should always produce the same bus, so we can
  * cache the heavy pertain operation.
  */
 const busCache = new Map();
 
+/**
+ * @ignore
+ * A way to strongly encourage users to use the BuildBus.for factory and not the
+ * BuildBus constructor.
+ */
 const INVOKE_FLAG = Symbol.for('FORCE_BUILDBUS_CREATE_FACTORY');
 
 /**
@@ -65,7 +71,7 @@ class BuildBus extends Trackable {
         }
         const bus = new BuildBus(INVOKE_FLAG, absContext);
         busCache.set(absContext, bus);
-        bus.identify(context, console.log); // should be quickly replaced!
+        bus.identify(context, console.log); //usually replaced w/ webpack logger
         return bus;
     }
     /**

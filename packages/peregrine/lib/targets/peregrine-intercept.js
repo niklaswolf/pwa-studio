@@ -12,8 +12,8 @@ class TalonWrapperConfig extends WrapLoaderConfig {
     /**
      * @private
      */
-    _provideSet(modulePath, ...rest) {
-        return super._provideSet(
+    getWrappersForExport(modulePath, ...rest) {
+        return super.getWrappersForExport(
             path.resolve(__dirname, '../talons/', modulePath),
             ...rest
         );
@@ -28,7 +28,7 @@ class TalonWrapperConfig extends WrapLoaderConfig {
              * @readonly
              * @memberof TalonWrapperConfig.ProductFullDetail
              */
-            useProductFullDetail: this._provideSet(
+            useProductFullDetail: this.getWrappersForExport(
                 'ProductFullDetail/useProductFullDetail.js',
                 'useProductFullDetail'
             )
@@ -44,7 +44,7 @@ class TalonWrapperConfig extends WrapLoaderConfig {
              * @readonly
              * @memberof TalonWrapperConfig.App
              */
-            useApp: this._provideSet('App/useApp.js', 'useApp')
+            useApp: this.getWrappersForExport('App/useApp.js', 'useApp')
         };
     }
 }
