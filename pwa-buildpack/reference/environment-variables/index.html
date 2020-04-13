@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Environment variables | Magento PWA Documentation</title>
+	<meta name="description" content="Everything you need to build a Magento PWA.">
+
+	<link rel="stylesheet" href="/pwa-studio/assets/css/app.css?ver=7" />
+	<link rel="stylesheet" href="/pwa-studio/assets/css/print.css?ver=7" media="print"/>
+
+	<link rel="stylesheet" href="/pwa-studio/builds/css/main.css" />
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<script>
+  var baseUrl = "/pwa-studio";
+  var algolia = {
+    id : "E642SEDTHL",
+    index: "pwa-devdocs",
+    key: "d2d0f33ab73e291ef8d88d8b565e754c"
+  };
+
+  var indices = [
+    {
+      label: "PWA",
+      name: "pwa-devdocs",
+      baseUrl: "https://pwastudio.io"
+    },
+    {
+      label: "DevDocs",
+      name: "devdocs",
+      facets: [["guide_version: 2.3", "versionless: true"]],
+      refinements: [
+        {
+          label: "Functional areas",
+          attribute: "functional_areas"
+        }
+      ],
+      baseUrl: "https://devdocs.magento.com"
+    },
+    {
+      label: "User Guide",
+      name: "merchdocs_ee",
+      baseUrl: "https://docs.magento.com/m2/ee/user_guide"
+    },
+    {
+      label: "MBI User Guide",
+      name: "merchdocs-mbi",
+      baseUrl: "https://docs.magento.com/mbi"
+    },
+    {
+      label: "Order Management",
+      name: "oms-en",
+      baseUrl: "https://omsdocs.magento.com"
+    }
+  ];
+</script>
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KRCLXBB');</script>
+<!-- End Google Tag Manager -->
+
+
+
+
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="https://magento.com/favicon.ico">
+	<link rel="apple-touch-icon" type="image/png" href="https://magento.com/apple-touch-icon.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="57x57" href="https://magento.com/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="72x72" href="https://magento.com/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="https://magento.com/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="114x114" href="https://magento.com/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="https://magento.com/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="144x144" href="https://magento.com/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="152x152" href="https://magento.com/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="https://magento.com/apple-touch-icon-180x180.png">
+
+</head>
+<body class="layout-default">
+
+
+	<header class="site-header">
+		<nav class="site-nav">
+
+  <div class="nav-container">
+
+    <div class="menu-btn">
+      <button id="menu-btn" class="menu-trigger menu-icon" aria-haspopup="true" aria-controls="nav-main" aria-label="Menu"></button>
+    </div>
+
+    <a class="logo" data-proofer-ignore href="/pwa-studio/">
+      <img src="/pwa-studio/assets/i/m-logo.svg" alt="">
+      <img src="/pwa-studio/assets/i/magento-logo.svg" alt="Magento" class="magento-logo" />
+      <span class="site-logo">PWA Docs</span>
+    </a>
+
+    <div id="nav-main" class="nav-main-wrap" aria-labelledby="menu-btn">
+      
+
+      <!-- Main Navigation -->
+<ul class="nav-main" role="menubar">
+
+  
+  <li class="nav-main-item" tabindex="0" role="menuitem" aria-haspopup="true">
+    <span href="#" data-proofer-ignore tabindex="-1">Getting Started</span>
+    <div class="nav-popup">
+      <ul>
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/overview/">Overview</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/storefront-architecture/">Storefront architecture</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/basic-concepts/">Basic concepts</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/pwa-buildpack/">PWA Buildpack</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/peregrine/">Peregrine</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/venia-pwa-concept/">Venia storefront concept</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/upward/">UPWARD</a>
+        </li> 
+        
+      </ul>
+    </div>
+  </li>
+
+  
+
+  
+  <li class="menuitem ">
+      <a href="/pwa-studio/tutorials/">Tutorials</a>
+  </li>
+  
+
+  
+  <li class="nav-main-item" tabindex="0" role="menuitem" aria-haspopup="true">
+    <span href="#" data-proofer-ignore tabindex="-1">Reference API</span>
+    <div class="nav-popup">
+      <ul>
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/">PWA Buildpack</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/peregrine/reference/item/">Peregrine API</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/venia-ui/reference/components/Button/">Venia UI API</a>
+        </li> 
+        
+      </ul>
+    </div>
+  </li>
+
+  
+
+  
+  <li class="nav-main-item" tabindex="0" role="menuitem" aria-haspopup="true">
+    <span href="#" data-proofer-ignore tabindex="-1">Integrations</span>
+    <div class="nav-popup">
+      <ul>
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/pagebuilder/">Page Builder</a>
+        </li> 
+        
+      </ul>
+    </div>
+  </li>
+
+  
+
+</ul>
+
+    </div>
+
+    <div class="nav-actions">
+        
+<div class="app-switcher">
+  <div class="dropdown">
+    <button id="app-switcher-trigger" class="app-switcher-trigger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Documentation sites"></button>
+    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="app-switcher-trigger" role="menu">
+      <div class="app-switcher-content">
+      
+      <div class="app-switcher-group">
+        <h3 class="app-swither-group-title">Developer</h3>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://devdocs.magento.com/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Commerce Developer Documentation">Commerce Developer Documentation</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="http://pwastudio.io/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=PWA Studio">PWA Studio</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://omsdocs.magento.com/en/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Order Management">Order Management</a></li>
+        
+      </div>
+      
+      <div class="app-switcher-group">
+        <h3 class="app-swither-group-title">Merchant</h3>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://docs.magento.com/m2/ee/user_guide/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Commerce User Guide">Commerce User Guide</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://omsdocs.magento.com/en/userguides/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Order Management">Order Management</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://docs.magento.com/mbi/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Business Intelligence">Business Intelligence</a></li>
+        
+      </div>
+      
+      </div>
+    </ul>
+  </div>
+</div>
+
+
+        <div class="search-btn">
+          <button class="search-trigger search-icon" aria-label="Search"></button>
+        </div>
+    
+        <form class="quick-search" action="/pwa-studio/search/" method="get" novalidate="novalidate">
+          <input type="search" name="query" placeholder="Search" />
+          <button class="quick-search-close" aria-label="Close search">&times;</button>
+        </form>
+
+    </div>
+
+  </div>
+</nav><!-- .site-nav -->
+<div class="nav-main-fader"></div>
+
+	</header>
+
+	<div class="global-wrapper">
+		<div class="message-banner">
+If you have any project questions, concerns, or contribution ideas, join our <a href="https://magentocommeng.slack.com/messages/C71HNKYS2"><strong>#pwa</strong></a> Slack channel.
+Find out how to create an account by visiting <a href="https://devdocs.magento.com/community/resources/resources.html">Community Resources</a>
+</div>
+
+
+		<div class="main-container">
+			<a id="main-content"></a>
+
+
+<div class="content-container">
+
+	<!-- sidebar -->
+<aside class="sidebar">
+    <button class="toc-toggler">Table of Contents</button>
+    <div class="sidebar-wrapper">
+
+      
+
+
+
+
+
+
+<div class="menu-section">
+    <div class="toc-entry"><h4 class="guide-title">PWA Buildpack API</h4></div>
+
+    <ul class="table-of-contents">
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/" class=" parent">Buildpack CLI</a>
+            
+
+            
+            <ul>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/create-custom-origin/" class=" ">Create custom origin</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/create-env-file/" class=" ">Create environment file</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/create-project/" class=" ">Create project</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/load-env/" class=" ">Load environment file</a>
+                    
+                </li>
+            
+            </ul>
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/configure-webpack" class=" ">Configure webpack</a>
+            
+
+            
+        </li>
+    
+        <li class="active">
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/environment-variables/" class=" ">Environment variables</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/magento-resolver/" class=" ">MagentoResolver</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/root-components-plugin/" class=" ">MagentoRootComponentsPlugin</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/object-types/" class=" ">Object Types</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/pwa-dev-server/" class=" ">PWADevServer</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pwa-buildpack/reference/serviceworker-plugin/" class=" ">ServiceWorkerPlugin</a>
+            
+
+            
+        </li>
+    
+    </ul>
+</div>
+
+
+
+    </div>
+</aside>
+<!-- /sidebar -->
+
+
+	<section class="content">
+		<div class="content-wrap">
+			<!-- page-header -->
+<section class="page-intro">
+	<h1 class="page-heading">Environment variables</h1>
+</section>
+
+			<!--
+The reference doc content is generated automatically from the source code.
+To update this section, update the doc blocks in the source code
+-->
+
+<h2 id="connecting-to-a-magento-store">Connecting to a Magento store</h2>
+
+<h3 id="magento_backend_url"><code class="highlighter-rouge">MAGENTO_BACKEND_URL</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">url</code></p>
+
+<p><strong>Example:</strong> <code class="highlighter-rouge">https://master-7rqtwti-mfwmkrjfqvbjk.us-4.magentosite.cloud/</code></p>
+
+<p>Connect to an instance of Magento 2.3 by specifying its public domain name.</p>
+
+<h2 id="magento-store-edition">Magento Store Edition</h2>
+
+<h3 id="magento_backend_edition"><code class="highlighter-rouge">MAGENTO_BACKEND_EDITION</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">CE</code></p>
+
+<p><strong>Example:</strong> <code class="highlighter-rouge">CE</code></p>
+
+<p>Specify the edition of the magento store (Enterprise Edition or Community Edition). Can be one of CE or EE.</p>
+
+<h2 id="image-optimizing-origin">Image Optimizing Origin</h2>
+
+<h3 id="image_optimizing_origin"><code class="highlighter-rouge">IMAGE_OPTIMIZING_ORIGIN</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">auto</code></p>
+
+<p>Specify the origin to use for images in the UI. Set to `backend` when Fastly or another CDN is optimizing images, and the frontend will load images directly from the Magento instance at MAGENTO_BACKEND_URL. To force usage of the onboard image optimizer, set to `onboard`. Set to `auto` to autodetect whether the backend is using FastlyIO and optimize onboard only if it needs to.</p>
+
+<h2 id="custom-local-origin">Custom local origin</h2>
+
+<h3 id="custom_origin_enabled"><code class="highlighter-rouge">CUSTOM_ORIGIN_ENABLED</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">bool</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">true</code></p>
+
+<p>Get or create a secure, unique hostname/port combination and a trusted SSL certificate for local development.</p>
+
+<h3 id="custom_origin_add_unique_hash"><code class="highlighter-rouge">CUSTOM_ORIGIN_ADD_UNIQUE_HASH</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">bool</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">true</code></p>
+
+<p>Add a unique hash string to the custom origin, based on filesystem location. This naturally separates domains when running multiple project folders on one developer machine.</p>
+
+<h3 id="custom_origin_subdomain"><code class="highlighter-rouge">CUSTOM_ORIGIN_SUBDOMAIN</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p>Specify the subdomain prefix of the custom origin manually, instead of using the package name.</p>
+
+<h3 id="custom_origin_exact_domain"><code class="highlighter-rouge">CUSTOM_ORIGIN_EXACT_DOMAIN</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p>Specify the exact domain of the custom origin manually.</p>
+
+<h2 id="development-server">Development server</h2>
+
+<h3 id="dev_server_host"><code class="highlighter-rouge">DEV_SERVER_HOST</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p>Specify the hostname the dev server should bind to. If this is set, it overrides the host chosen by custom origin settings.</p>
+
+<h3 id="dev_server_port"><code class="highlighter-rouge">DEV_SERVER_PORT</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">num</code></p>
+
+<p>Specify the port the dev server should bind to. If this is set, it overrides the port chosen by custom origin settings.</p>
+
+<h3 id="dev_server_service_worker_enabled"><code class="highlighter-rouge">DEV_SERVER_SERVICE_WORKER_ENABLED</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">bool</code></p>
+
+<p>Use a service worker in developer mode (PWADevServer), which are disabled in dev mode normally to simplify cache. Good for debugging.</p>
+
+<h3 id="dev_server_watch_options_use_polling"><code class="highlighter-rouge">DEV_SERVER_WATCH_OPTIONS_USE_POLLING</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">num</code></p>
+
+<p>Set to a number greater than 0 to denote a polling interval in milliseconds. If this is greater than 0, the dev server will use filesystem polling instead of native filesystem events to watch for changes. Can increase CPU usage, but sometimes is the best option for exotic filesystems (e.g. NFS).</p>
+
+<h2 id="staging-server">Staging server</h2>
+
+<h3 id="staging_server_host"><code class="highlighter-rouge">STAGING_SERVER_HOST</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p>Specify the hostname the staging server should bind to. If this is set, it overrides the host chosen by custom origin settings.</p>
+
+<h3 id="staging_server_port"><code class="highlighter-rouge">STAGING_SERVER_PORT</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">num</code></p>
+
+<p>Specify the port the staging server should bind to. If this is set, it overrides the port chosen by custom origin settings.</p>
+
+<h3 id="staging_build_id"><code class="highlighter-rouge">STAGING_BUILD_ID</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p>Specify the id which Buildpack will put in a comment above all generated bundle files and the index.html file</p>
+
+<h2 id="onboard-image-optimization-service">Onboard image optimization service</h2>
+
+<h3 id="image_service_cache_expires"><code class="highlighter-rouge">IMAGE_SERVICE_CACHE_EXPIRES</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">1 hour</code></p>
+
+<p><strong>Example:</strong> <code class="highlighter-rouge">5 minutes</code></p>
+
+<p>Lifetime of images in the local cache of resized images. Format is “[length] [unit]”, as in “10 minutes” or “1 day”.</p>
+
+<h3 id="image_service_cache_debug"><code class="highlighter-rouge">IMAGE_SERVICE_CACHE_DEBUG</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">bool</code></p>
+
+<p>Log image cache debug info to the console.</p>
+
+<h2 id="upward-server-settings">UPWARD server settings</h2>
+
+<h3 id="upward_js_upward_path"><code class="highlighter-rouge">UPWARD_JS_UPWARD_PATH</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">upward.yml</code></p>
+
+<p>UPWARD configuration file to use for the PWADevServer and the “stage:venia” sample server.</p>
+
+<h3 id="upward_js_bind_local"><code class="highlighter-rouge">UPWARD_JS_BIND_LOCAL</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">bool</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">true</code></p>
+
+<p>Upon launching the staging server, automatically attach to a local port and listen.</p>
+
+<h3 id="upward_js_log_url"><code class="highlighter-rouge">UPWARD_JS_LOG_URL</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">bool</code></p>
+
+<p><strong>Default:</strong> <code class="highlighter-rouge">true</code></p>
+
+<p>Log the bound URL to stdout once the sever is listening. Useful in testing and discovery scenarios, but may be disabled in production.</p>
+
+<h2 id="checkout-and-payment-settings">Checkout and payment settings</h2>
+
+<h3 id="checkout_braintree_token"><code class="highlighter-rouge">CHECKOUT_BRAINTREE_TOKEN</code></h3>
+
+<p><strong>Type:</strong> <code class="highlighter-rouge">str</code></p>
+
+<p><strong>Example:</strong> <code class="highlighter-rouge">sandbox_8yrzsvtm_s2bg8fs563crhqzk</code></p>
+
+<p>Specify a Braintree API token to direct the Venia storefront to communicate with your Braintree instance. You can find this value in Braintree’s Control Panel under Settings &gt; API Keys &gt; Tokenization Keys.</p>
+
+
+			
+		</div>
+		<!-- /.content-wrap -->
+
+		<div class="page-info">
+
+  
+
+  
+  <div class="github-link">
+    <a class="improve-page" href="https://github.com/magento/pwa-studio/tree/develop/pwa-devdocs/src/pwa-buildpack/reference/environment-variables/index.md" target="_blank">
+      Edit this page on GitHub
+    </a>
+  </div>
+  
+
+  
+  <div class="new-issue">
+    <a href="https://github.com/magento/pwa-studio/issues/new?title=Feedback on page: /pwa-buildpack/reference/environment-variables/" target="_blank">
+      Give us feedback
+    </a>
+  </div>
+  
+
+</div>
+
+
+	</section>
+	<!-- /.content -->
+
+</div> <!-- /.content-container -->
+
+
+	</div>
+	<!-- /.main-container -->
+</div>
+<!-- /#gl-wrapper -->
+
+<!-- footer-->
+<div class="page-footer">
+  <div class="container">
+
+    <div class="copyright-links">
+      <ul class="nav footer-links">
+    <li><a href="http://magento.com/legal/terms/privacy/">Privacy Policy</a></li>
+    <li><a href="http://magento.com/legal/terms/">Terms of Service</a></li>
+    <li><a href="http://magento.com/legal/licensing/">License/Trademark FAQ</a></li>
+    <li><a href="https://magentocommeng.slack.com/messages/C71HNKYS2">#pwa Slack channel</a></li>
+  </ul>
+    </div>
+
+		<div class="copyright-date">&copy; 2020 Magento. All rights reserved.</div>
+
+  </div>
+</div>
+<!-- / #footer -->
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+<script src="/pwa-studio/assets/js/app.min.js?ver=7"></script>
+
+<script src="/pwa-studio/builds/js/index.bundle.js"></script>
+
+</body>
+</html>
+

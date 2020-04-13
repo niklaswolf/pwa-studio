@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Page Builder to PWA integration | Magento PWA Documentation</title>
+	<meta name="description" content="Everything you need to build a Magento PWA.">
+
+	<link rel="stylesheet" href="/pwa-studio/assets/css/app.css?ver=7" />
+	<link rel="stylesheet" href="/pwa-studio/assets/css/print.css?ver=7" media="print"/>
+
+	<link rel="stylesheet" href="/pwa-studio/builds/css/main.css" />
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<script>
+  var baseUrl = "/pwa-studio";
+  var algolia = {
+    id : "E642SEDTHL",
+    index: "pwa-devdocs",
+    key: "d2d0f33ab73e291ef8d88d8b565e754c"
+  };
+
+  var indices = [
+    {
+      label: "PWA",
+      name: "pwa-devdocs",
+      baseUrl: "https://pwastudio.io"
+    },
+    {
+      label: "DevDocs",
+      name: "devdocs",
+      facets: [["guide_version: 2.3", "versionless: true"]],
+      refinements: [
+        {
+          label: "Functional areas",
+          attribute: "functional_areas"
+        }
+      ],
+      baseUrl: "https://devdocs.magento.com"
+    },
+    {
+      label: "User Guide",
+      name: "merchdocs_ee",
+      baseUrl: "https://docs.magento.com/m2/ee/user_guide"
+    },
+    {
+      label: "MBI User Guide",
+      name: "merchdocs-mbi",
+      baseUrl: "https://docs.magento.com/mbi"
+    },
+    {
+      label: "Order Management",
+      name: "oms-en",
+      baseUrl: "https://omsdocs.magento.com"
+    }
+  ];
+</script>
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KRCLXBB');</script>
+<!-- End Google Tag Manager -->
+
+
+
+
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="https://magento.com/favicon.ico">
+	<link rel="apple-touch-icon" type="image/png" href="https://magento.com/apple-touch-icon.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="57x57" href="https://magento.com/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="72x72" href="https://magento.com/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="https://magento.com/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="114x114" href="https://magento.com/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="https://magento.com/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="144x144" href="https://magento.com/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="152x152" href="https://magento.com/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="https://magento.com/apple-touch-icon-180x180.png">
+
+</head>
+<body class="layout-default">
+
+
+	<header class="site-header">
+		<nav class="site-nav">
+
+  <div class="nav-container">
+
+    <div class="menu-btn">
+      <button id="menu-btn" class="menu-trigger menu-icon" aria-haspopup="true" aria-controls="nav-main" aria-label="Menu"></button>
+    </div>
+
+    <a class="logo" data-proofer-ignore href="/pwa-studio/">
+      <img src="/pwa-studio/assets/i/m-logo.svg" alt="">
+      <img src="/pwa-studio/assets/i/magento-logo.svg" alt="Magento" class="magento-logo" />
+      <span class="site-logo">PWA Docs</span>
+    </a>
+
+    <div id="nav-main" class="nav-main-wrap" aria-labelledby="menu-btn">
+      
+
+      <!-- Main Navigation -->
+<ul class="nav-main" role="menubar">
+
+  
+  <li class="nav-main-item" tabindex="0" role="menuitem" aria-haspopup="true">
+    <span href="#" data-proofer-ignore tabindex="-1">Getting Started</span>
+    <div class="nav-popup">
+      <ul>
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/overview/">Overview</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/storefront-architecture/">Storefront architecture</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/basic-concepts/">Basic concepts</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/pwa-buildpack/">PWA Buildpack</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/peregrine/">Peregrine</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/venia-pwa-concept/">Venia storefront concept</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/technologies/upward/">UPWARD</a>
+        </li> 
+        
+      </ul>
+    </div>
+  </li>
+
+  
+
+  
+  <li class="menuitem ">
+      <a href="/pwa-studio/tutorials/">Tutorials</a>
+  </li>
+  
+
+  
+  <li class="nav-main-item" tabindex="0" role="menuitem" aria-haspopup="true">
+    <span href="#" data-proofer-ignore tabindex="-1">Reference API</span>
+    <div class="nav-popup">
+      <ul>
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/pwa-buildpack/reference/buildpack-cli/">PWA Buildpack</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/peregrine/reference/item/">Peregrine API</a>
+        </li> 
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/venia-ui/reference/components/Button/">Venia UI API</a>
+        </li> 
+        
+      </ul>
+    </div>
+  </li>
+
+  
+
+  
+  <li class="nav-main-item" tabindex="0" role="menuitem" aria-haspopup="true">
+    <span href="#" data-proofer-ignore tabindex="-1">Integrations</span>
+    <div class="nav-popup">
+      <ul>
+        
+        <li role="menuitem">
+          <a href="/pwa-studio/pagebuilder/">Page Builder</a>
+        </li> 
+        
+      </ul>
+    </div>
+  </li>
+
+  
+
+</ul>
+
+    </div>
+
+    <div class="nav-actions">
+        
+<div class="app-switcher">
+  <div class="dropdown">
+    <button id="app-switcher-trigger" class="app-switcher-trigger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Documentation sites"></button>
+    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="app-switcher-trigger" role="menu">
+      <div class="app-switcher-content">
+      
+      <div class="app-switcher-group">
+        <h3 class="app-swither-group-title">Developer</h3>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://devdocs.magento.com/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Commerce Developer Documentation">Commerce Developer Documentation</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="http://pwastudio.io/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=PWA Studio">PWA Studio</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://omsdocs.magento.com/en/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Order Management">Order Management</a></li>
+        
+      </div>
+      
+      <div class="app-switcher-group">
+        <h3 class="app-swither-group-title">Merchant</h3>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://docs.magento.com/m2/ee/user_guide/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Commerce User Guide">Commerce User Guide</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://omsdocs.magento.com/en/userguides/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Order Management">Order Management</a></li>
+        
+        <li role="menuitem"><a class="dropdown-item" href="https://docs.magento.com/mbi/?itm_source=pwa-devdocs&itm_medium=top_nav&itm_campaign=app_switcher&itm_term=Business Intelligence">Business Intelligence</a></li>
+        
+      </div>
+      
+      </div>
+    </ul>
+  </div>
+</div>
+
+
+        <div class="search-btn">
+          <button class="search-trigger search-icon" aria-label="Search"></button>
+        </div>
+    
+        <form class="quick-search" action="/pwa-studio/search/" method="get" novalidate="novalidate">
+          <input type="search" name="query" placeholder="Search" />
+          <button class="quick-search-close" aria-label="Close search">&times;</button>
+        </form>
+
+    </div>
+
+  </div>
+</nav><!-- .site-nav -->
+<div class="nav-main-fader"></div>
+
+	</header>
+
+	<div class="global-wrapper">
+		<div class="message-banner">
+If you have any project questions, concerns, or contribution ideas, join our <a href="https://magentocommeng.slack.com/messages/C71HNKYS2"><strong>#pwa</strong></a> Slack channel.
+Find out how to create an account by visiting <a href="https://devdocs.magento.com/community/resources/resources.html">Community Resources</a>
+</div>
+
+
+		<div class="main-container">
+			<a id="main-content"></a>
+
+
+<div class="content-container">
+
+	<!-- sidebar -->
+<aside class="sidebar">
+    <button class="toc-toggler">Table of Contents</button>
+    <div class="sidebar-wrapper">
+
+      
+
+
+
+
+
+
+<div class="menu-section">
+    <div class="toc-entry"><h4 class="guide-title">Page Builder</h4></div>
+
+    <ul class="table-of-contents">
+    
+        <li class="active">
+            
+            <a href="/pwa-studio/pagebuilder/" class=" ">Integration</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pagebuilder/known-limitations/" class=" ">Known limitations</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <span>Creating custom components</span>
+            
+
+            
+            <ul>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/custom-components/overview/" class=" ">Overview</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/custom-components/setup-component/" class=" ">Set up component</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/custom-components/add-aggregator/" class=" ">Add aggregator</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/custom-components/add-stylesheet/" class=" ">Add stylesheet</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/custom-components/add-component/" class=" ">Add component</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/custom-components/debugging/" class=" ">Debugging tips</a>
+                    
+                </li>
+            
+            </ul>
+            
+        </li>
+    
+        <li >
+            
+            <a href="/pwa-studio/pagebuilder/utility-functions/" class=" ">Utility functions</a>
+            
+
+            
+        </li>
+    
+        <li >
+            
+            <span>Components</span>
+            
+
+            
+            <ul>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/banner/" class=" ">Banner</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/block/" class=" ">Block</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/buttons/" class=" ">Buttons</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/column/" class=" ">Column</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/divider/" class=" ">Divider</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/heading/" class=" ">Heading</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/html/" class=" ">HTML Code</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/image/" class=" ">Image</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/map/" class=" ">Map</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/products/" class=" ">Products</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/row/" class=" ">Row</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/slider/" class=" ">Slider</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/tabs/" class=" ">Tabs</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/text/" class=" ">Text</a>
+                    
+                </li>
+            
+                <li >
+                    
+                    <a href="/pwa-studio/pagebuilder/components/video/" class=" ">Video</a>
+                    
+                </li>
+            
+            </ul>
+            
+        </li>
+    
+    </ul>
+</div>
+
+
+
+    </div>
+</aside>
+<!-- /sidebar -->
+
+
+	<section class="content">
+		<div class="content-wrap">
+			<!-- page-header -->
+<section class="page-intro">
+	<h1 class="page-heading">Page Builder to PWA integration</h1>
+</section>
+
+			<p class="bs-callout-info">The Page Builder integration to PWA Studio is only compatible with Magento Commerce 2.3.4+. A GraphQL change within Magento Commerce 2.3.4 was necessary in order to integrate the Page Builder Products content type into PWA Studio.</p>
+
+<h2 id="page-builder-integration-the-big-picture">Page Builder Integration: The Big Picture</h2>
+
+<p>At the highest level, the Page Builder integration into PWA Studio simply ensures that CMS Pages built in Magento Commerce with <em>native</em> Page Builder content types are rendered correctly within PWA Studio apps.</p>
+
+<p>The diagram below shows how the PWA Studio makes a request to the Magento Commerce backend to retrieve a CMS page for processing. The Page Builder integration framework processes the original Page Builder HTML and returns a group of React components that faithfully reproduces the Page Builder content for display in a PWA Studio app.</p>
+
+<p><img src="images/PageBuilderBigPicture1.svg" alt="Page Builder Integration Big Picture" /></p>
+
+<ol>
+  <li>
+    <p>The Page Builder integration framework processes Page Builder content types within a CMS Page: Rows, Headings, Banners, Sliders, and so on.</p>
+  </li>
+  <li>
+    <p>A set of equivalent content type React components – Row, Heading, Banner, Slider, Text and so on – are populated with the content and style properties from the original Page Builder content types so they can be displayed correctly within PWA Studio app storefronts.</p>
+  </li>
+</ol>
+
+<h2 id="page-builder-integration-custom-content-types">Page Builder Integration: Custom Content Types</h2>
+
+<p>If you only used Page Builder’s 15 native content types (Dynamic Blocks are not supported), your Page Builder pages are automatically rendered within a PWA Studio app. No development work is necessary. However, if you use one or more of your own custom Page Builder content types within your CMS pages (for example, a <a href="https://devdocs.magento.com/page-builder/docs/create-custom-content-type/overview.html">Quote-Testimonial content type</a>), you will need to create your own equivalent Page Builder React component and integrate it within the framework. Otherwise, your custom content type will not appear on the storefront within a PWA Studio app. That area of your page will simply be blank.</p>
+
+<p class="bs-callout-info">To develop and integrate your own custom content type components into your PWA Studio app, follow our <a href="/pwa-studio/pagebuilder/custom-components/overview/">Creating custom components</a> tutorial.</p>
+
+<p><img src="images/PageBuilderIntegration.svg" alt="Page Builder Integration Overview" /></p>
+
+<h2 id="page-builder-integration-framework-the-details">Page Builder Integration Framework: The Details</h2>
+
+<p>As part of the Page Builder integration to PWA Studio, we implemented a framework that converts Page Builder’s master format (HTML) into a structured format that works in React and PWA Studio. The components and functions within the Page Builder integration work together to:</p>
+
+<ul>
+  <li>
+    <p>Receives Page Builder content types in the original HTML format (<strong>RichContent</strong> and <strong>PageBuilder</strong> components)</p>
+  </li>
+  <li>
+    <p>Extracts the content and properties from each content type’s HTML (<strong>Master Format parser</strong>, <strong>config function</strong>, and <strong>property aggregators</strong>)</p>
+  </li>
+  <li>
+    <p>Retrieves the equivalent content type React components for those content types (<strong>ContentTypeFactory</strong>, <strong>config function</strong>, and <strong>content type components</strong>)</p>
+  </li>
+  <li>
+    <p>Populates those React components with the content and style properties from the original content types (<strong>ContentTypeFactory and content type components</strong>)</p>
+  </li>
+  <li>
+    <p>Returns those components for for display in a PWA Studio app (<strong>PageBuilder</strong> and <strong>RichContent</strong> components)</p>
+  </li>
+</ul>
+
+<p>The components and functions that provide these services are described as follows:</p>
+
+<p><strong>RichContent</strong>: The <code class="highlighter-rouge">&lt;RichContent /&gt;</code> component provides the entry point into the Page Builder PWA framework. It determines whether the HTML passed by the PWA Studio app contains Page Builder content. If it does, the HTML is sent to the <code class="highlighter-rouge">&lt;PageBuilder /&gt;</code> component for processing. If not, the HTML is sent directly to the PWA Studio app for display.</p>
+
+<p><strong>PageBuilder</strong>: The <code class="highlighter-rouge">&lt;PageBuilder /&gt;</code> component (not to be confused with the individual Page Builder React components) directs the parsing of the master format HTML as well as retrieving, populating, and returning the equivalent React components back to the Venia app.</p>
+
+<p><strong>Master Format parser</strong>: The master format parser (<code class="highlighter-rouge">parseStorageHtml()</code>) decomposes the master format HTML into the content type HTML fragments (HTMLElements) that compose the master format. The parser sends the content type HTML to the correct property aggregator (<code class="highlighter-rouge">configAggregator</code>) using the configuration object.</p>
+
+<p><strong>Config function</strong> (<em>integration point</em>): The configuration function (<code class="highlighter-rouge">getContentTypeConfig()</code>) provides an interface for retrieving a content type’s <em>property aggregator</em> and its corresponding <em>content type component</em>. The configuration object also provides the integration point for your own custom content type components. See <a href="/pwa-studio/pagebuilder/custom-components/setup-component/">Set up component</a> for details.</p>
+
+<p><strong>Property aggregator</strong> (<em>integration point</em>): The property aggregator for a content type (example: <code class="highlighter-rouge">bannerConfigAggregator</code>) is a function that retrieves both content and style properties from the content type’s HTML. Aggregators typically use both DOM properties and several provided framework utility functions to retrieve these properties and write them to flat property objects used to populate the content type React components. For each of your custom content types, you will need to create your own property aggregator. See <a href="/pwa-studio/pagebuilder/custom-components/add-aggregator/">Add aggregator</a> for details.</p>
+
+<p><strong>Content type component</strong> (<em>integration point</em>): The content type component is a React component that is equivalent to a Page Builder content type. There are 15 content type components within PWA Studio: Row, Column, Tabs, Banners, Sliders, and so on. Each content type component is populated with the original content and style properties from the content type to faithfully represent your Page Builder content within a PWA Studio app like Venia. For each of your custom content types, you will need to create the equivalent content type React component . See <a href="/pwa-studio/pagebuilder/custom-components/add-component/">Add component</a> for details.</p>
+
+<p><strong>ContentTypeFactory</strong>: The <code class="highlighter-rouge">&lt;ContentTypeFactory /&gt;</code> component parses a property object tree to retrieve the equivalent React component for each content type property object it finds. It then populates these components and sends them back to the PWA Studio app as a composite React element displayed to the end user.</p>
+
+<h2 id="page-builder-integration-framework-how-it-works">Page Builder Integration Framework: How it works</h2>
+
+<p>The framework executes on the client side to ensure compatibility with the various hosting options available for Magento Commerce. The following flow diagram describes how the parts of the framework work together to render Page Builder components within the Venia app.</p>
+
+<p><img src="images/PageBuilderIntegrationDetails.svg" alt="Page Builder Integration Details" /></p>
+
+<ol>
+  <li>
+    <p>The <strong>Venia app</strong> sends a GraphQL query to get the user’s requested page. This requested page comes from the <code class="highlighter-rouge">content</code> field of <code class="highlighter-rouge">cms_pages</code> table in Magento’s database. The content returned is an HTML string with Page Builder meta data. We call this HTML string the master format, which is passed to the <code class="highlighter-rouge">&lt;RichContent /&gt;</code> component for initial processing.</p>
+  </li>
+  <li>
+    <p>The <strong>RichContent</strong> component determines if the HTML string contains Page Builder content, using simple pattern recognition. If the HTML does not include Page Builder content, it is returned to Venia and rendered as plain HTML. If the HTML does include Page Builder content, the HTML string (which we can now define as a master format) is passed to the <code class="highlighter-rouge">&lt;PageBuilder /&gt;</code> framework component, which starts the process of matching the content types within the master format to their equivalent PWA Studio React components.</p>
+  </li>
+  <li>
+    <p>The <strong>PageBuilder</strong> framework component passes the master format to the framework’s parser function called <code class="highlighter-rouge">parseStorageHTML()</code>.</p>
+  </li>
+  <li>
+    <p>The <strong>parser</strong> function parses the master format HTML recursively to decompose all the Page Builder content types into their own <code class="highlighter-rouge">HTMLElement</code> strings for further processing. When the parser finds a content type, it uses the framework’s config function to access that content type’s property aggregator. The aggregator retrieves content and styles from the <code class="highlighter-rouge">HTMLElement</code> and writes them to a flat object (used later to hydrate the content type component).</p>
+
+    <p class="bs-callout-info">Each Page Builder content type has its own corresponding property aggregator. For example, the Heading content type (rendered in the master format as HTML) has a Heading aggregator (<code class="highlighter-rouge">headingConfigAggregator</code>), which converts the Heading’s HTML properties to a flat object with those same properties. The parser does this for each content type it finds in the master format: uses the <code class="highlighter-rouge">getContentTypeConfig()</code> function to find and run the content type’s property aggregator, which returns an object with both the content and the style properties for that content type. All CMS pages built with Page Builder have at least two content types: a Row content type and at least one other content type contained within that Row, such as a Banner.</p>
+  </li>
+  <li>
+    <p>When the <strong>parser</strong> function finishes processing all the content types within the master format, it returns a property object tree for those content types back to the <code class="highlighter-rouge">&lt;PageBuilder /&gt;</code> component.</p>
+  </li>
+  <li>
+    <p>The <strong>PageBuilder</strong> framework component passes the property object tree to the framework’s <code class="highlighter-rouge">&lt;ContentTypeFactory /&gt;</code> component for further processing.</p>
+  </li>
+  <li>
+    <p>Much like in step 4 with the parser, the framework’s <strong>ContentTypeFactory</strong> component retrieves the equivalent React component for each content type property object it finds within the object tree.</p>
+  </li>
+  <li>
+    <p>The <strong>ContentTypeFactory</strong> populates those React components with the property values retrieved from each content type’s property aggregator.</p>
+  </li>
+  <li>
+    <p>And finally, the <strong>PageBuilder</strong> framework component returns a composite React element with all the Page Builder content type components needed to render the original Page Builder content within a PWA Studio app.</p>
+  </li>
+</ol>
+
+
+			
+		</div>
+		<!-- /.content-wrap -->
+
+		<div class="page-info">
+
+  
+
+  
+  <div class="github-link">
+    <a class="improve-page" href="https://github.com/magento/pwa-studio/tree/develop/pwa-devdocs/src/pagebuilder/index.md" target="_blank">
+      Edit this page on GitHub
+    </a>
+  </div>
+  
+
+  
+  <div class="new-issue">
+    <a href="https://github.com/magento/pwa-studio/issues/new?title=Feedback on page: /pagebuilder/" target="_blank">
+      Give us feedback
+    </a>
+  </div>
+  
+
+</div>
+
+
+	</section>
+	<!-- /.content -->
+
+</div> <!-- /.content-container -->
+
+
+	</div>
+	<!-- /.main-container -->
+</div>
+<!-- /#gl-wrapper -->
+
+<!-- footer-->
+<div class="page-footer">
+  <div class="container">
+
+    <div class="copyright-links">
+      <ul class="nav footer-links">
+    <li><a href="http://magento.com/legal/terms/privacy/">Privacy Policy</a></li>
+    <li><a href="http://magento.com/legal/terms/">Terms of Service</a></li>
+    <li><a href="http://magento.com/legal/licensing/">License/Trademark FAQ</a></li>
+    <li><a href="https://magentocommeng.slack.com/messages/C71HNKYS2">#pwa Slack channel</a></li>
+  </ul>
+    </div>
+
+		<div class="copyright-date">&copy; 2020 Magento. All rights reserved.</div>
+
+  </div>
+</div>
+<!-- / #footer -->
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+<script src="/pwa-studio/assets/js/app.min.js?ver=7"></script>
+
+<script src="/pwa-studio/builds/js/index.bundle.js"></script>
+
+</body>
+</html>
+
