@@ -22,7 +22,8 @@ const busCache = new Map();
 const INVOKE_FLAG = Symbol.for('FORCE_BUILDBUS_CREATE_FACTORY');
 
 /**
- * Broker for dependencies with Targets to interact with each other.
+ * Manager of dependencies' participation in project builds and tasks. Broker
+ * for dependencies with Targets to interact with each other.
  *
  * @example <caption>Get or create the BuildBus for the package.json file in `./project-dir`, then bind targets, then call a target.</caption>
  * const bus = BuildBus.for('./project-dir);
@@ -71,7 +72,7 @@ class BuildBus extends Trackable {
         }
         const bus = new BuildBus(INVOKE_FLAG, absContext);
         busCache.set(absContext, bus);
-        bus.identify(context, console.log); //usually replaced w/ webpack logger
+        bus.attach(context, console.log); //usually replaced w/ webpack logger
         return bus;
     }
     /**
@@ -118,6 +119,17 @@ class BuildBus extends Trackable {
     _phaseToSubject(phase) {
         return `pwa-studio.targets.${phase}`;
     }
+    /**
+     * Method which connects TargetProviders to each other. BuildBus passes
+     * this method to TargetProvider as its `getExternalTargets` callback.
+     *
+     * @private
+     * @param {Object} requestor - Dependency requesting the targets.
+     * @param {string} requestor.name - Name of the dependency requesting targets.
+     * @param {string} requested - Name of the dependency whose targets are being requested.
+     * @returns {Object<string,Target>} - Object whose strings are target names and whose values are the Targets of the external dependency.
+     * @memberof BuildBus
+     */
     _requestTargets(requestor, requested) {
         const source = requestor.name;
         this.track('requestTargets', { source, requested });

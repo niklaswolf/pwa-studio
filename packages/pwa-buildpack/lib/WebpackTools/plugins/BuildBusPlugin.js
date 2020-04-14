@@ -34,7 +34,7 @@ class BuildBusPlugin {
                     this._trackingQueue.forEach(line =>
                         logBusTracking(...line)
                     );
-                    this.bus.identify('BuildBusPlugin', logBusTracking);
+                    this.bus.attach('BuildBusPlugin', logBusTracking);
                 }
             );
         }

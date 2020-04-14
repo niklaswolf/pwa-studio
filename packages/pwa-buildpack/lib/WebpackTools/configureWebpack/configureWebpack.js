@@ -122,7 +122,7 @@ async function configureWebpack(options) {
 
     const busTrackingQueue = [];
     const bus = BuildBus.for(context);
-    bus.identify('configureWebpack', (...args) => busTrackingQueue.push(args));
+    bus.attach('configureWebpack', (...args) => busTrackingQueue.push(args));
     bus.init();
 
     const babelRootMode = await getBabelRootMode(context);

@@ -6,7 +6,7 @@ beforeEach(() => logFn.mockClear());
 
 const confirmDead = () => {
     const trackable = new Trackable();
-    trackable.identify('foo', logFn);
+    trackable.attach('foo', logFn);
     expect(() => trackable.toJSON()).not.toThrow();
     expect(trackable.toJSON()).toBeUndefined();
     expect(() => trackable.track('bar')).not.toThrow();
@@ -18,7 +18,7 @@ test('starts in dead mode', confirmDead);
 test('switches in and out of live mode', () => {
     const trackable = new Trackable();
     Trackable.enableTracking();
-    trackable.identify('foo', logFn);
+    trackable.attach('foo', logFn);
     expect(trackable.toJSON()).toMatchObject({
         type: 'Trackable',
         id: 'foo'
@@ -50,9 +50,9 @@ test('recursively builds origin object from parents', () => {
     const grandparent = new OldGuy();
     const parent = new Patriarch();
     const child = new Zookeeper();
-    grandparent.identify('methuselah', logFn);
-    parent.identify('lamech', grandparent);
-    child.identify('noah', parent);
+    grandparent.attach('methuselah', logFn);
+    parent.attach('lamech', grandparent);
+    child.attach('noah', parent);
 
     Trackable.enableTracking();
 
@@ -111,12 +111,12 @@ test('limits visual recursion in util.inspect', () => {
     const branch = new Wood();
     const twig = new Wood();
     const leaf = new Wood();
-    tree.identify('tree', (origin, ...args) =>
+    tree.attach('tree', (origin, ...args) =>
         logFn(inspect(origin, { depth: 1 }), ...args)
     );
-    branch.identify('branch', tree);
-    twig.identify('twig', branch);
-    leaf.identify('leaf', twig);
+    branch.attach('branch', tree);
+    twig.attach('twig', branch);
+    leaf.attach('leaf', twig);
     Trackable.enableTracking();
     leaf.track('wind');
     Trackable.disableTracking();

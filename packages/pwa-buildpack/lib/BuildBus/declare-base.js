@@ -14,7 +14,8 @@ module.exports = targets => {
         /**
          * @callback envVarIntercept
          * @param {Object} defs - The envVarDefinitions.json structure.
-         * @returns {undefined} - Interceptors do not need to return.
+         * @returns {undefined} - Interceptors of `envVarDefinitions` may mutate
+         *   the definitions object. Any returned value will be ignored.
          */
 
         /**
@@ -50,7 +51,7 @@ module.exports = targets => {
          *   register wrapper functions on the module files they should wrap.
          * @returns {WrapLoaderConfig} - Interceptors must return a config
          *   object, either by modifying and returning the argument or by
-         *   generating a new one.
+         *   generating and returning a new one.
          */
 
         /**
@@ -76,7 +77,9 @@ module.exports = targets => {
         /**
          * @callback webpackCompilerIntercept
          * @param {webpack.Compiler} compiler - The Webpack compiler instance
-         * @returns {undefined} - Intereptors do not need to return.
+         * @returns {undefined} - Interceptors of `webpackCompiler` should tap
+         *   hooks on the provided `compiler` object. Any returned value will be
+         *   ignored.
          */
 
         /**
@@ -86,6 +89,14 @@ module.exports = targets => {
          *
          * @type {webpack.SyncHook}
          * @param {webpackCompilerIntercept} callack
+         *
+         * @example <caption>Tap the compiler's `watchRun` hook.</caption>
+         * targets.of('@magento/pwa-buildpack').webpackCompiler.tap(compiler => {
+         *   compiler.hooks.watchRun.tapPromise(async () => {
+         *      compiler.getInfrastructureLogger('my-extension')
+         *        .info('I do something special in the dev server!');
+         *   });
+         * });
          */
         webpackCompiler: new targets.types.Sync(['compiler']),
 
