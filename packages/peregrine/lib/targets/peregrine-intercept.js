@@ -1,3 +1,6 @@
+/**
+ * @module Peregrine/Targets
+ */
 const path = require('path');
 const WrapLoaderConfig = require('@magento/pwa-buildpack/lib/WebpackTools/WrapLoaderConfig');
 

@@ -88,7 +88,7 @@ module.exports = targets => {
          * This almost always happens once per build, even in dev mode.
          *
          * @type {webpack.SyncHook}
-         * @param {webpackCompilerIntercept} callack
+         * @param {webpackCompilerIntercept} callback
          *
          * @example <caption>Tap the compiler's `watchRun` hook.</caption>
          * targets.of('@magento/pwa-buildpack').webpackCompiler.tap(compiler => {
