@@ -8,6 +8,7 @@ const nodeExternals = require('webpack-node-externals');
 const { mockBuildBus } = require('./testTargets');
 const { makeCompiler, compileToPromise } = require('./testWebpackCompiler');
 const MagentoResolver = require('../WebpackTools/MagentoResolver');
+const ModuleTransformConfig = require('../WebpackTools/ModuleTransformConfig');
 const { evalInDom } = require('./evaluateScripts');
 const {
     getModuleRules,
@@ -47,7 +48,7 @@ const BuildBusPlugin = require('../WebpackTools/plugins/BuildBusPlugin');
  */
 async function buildModuleWith(
     moduleUnderTest,
-    { context, dependencies, mockFiles = {}, ...otherWebpackSettings }
+    { context, dependencies, mockFiles = {}, alias, ...otherWebpackSettings }
 ) {
     const bus = mockBuildBus({
         context,
@@ -60,7 +61,13 @@ async function buildModuleWith(
         src: path.resolve(context, 'src')
     };
 
-    const resolver = new MagentoResolver({ paths });
+    const resolver = new MagentoResolver({ paths, alias });
+
+    const transforms = new ModuleTransformConfig(resolver);
+    bus.getTargetsOf('@magento/pwa-buildpack').transformModules.call(x =>
+        transforms.add(x)
+    );
+    const transformRequests = await transforms.toLoaderOptions();
 
     let entry;
     // Most of the time, the entry module is a real file.
@@ -84,7 +91,8 @@ async function buildModuleWith(
         babelRootMode: 'upward',
         mode: 'test',
         paths,
-        resolver
+        resolver,
+        transformRequests
     };
 
     // Leave most modules external, so Webpack builds faster.

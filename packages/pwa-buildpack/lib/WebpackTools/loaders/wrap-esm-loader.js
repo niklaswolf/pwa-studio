@@ -8,13 +8,6 @@ function wrapEsmLoader(content) {
             name.includes('/') ? name.slice(name.lastIndexOf('/')) : name
         )}_${++ids}`;
 
-    const { wrap } = this.query;
-    const exportMap = wrap[this.resourcePath];
-    if (!exportMap) {
-        this.callback(null, content);
-        return;
-    }
-
     const defaultExportRE = /^\s*export\s+default/m;
     // todo make this actually spec with a parser
     const exportRE = name =>
@@ -48,39 +41,27 @@ function wrapEsmLoader(content) {
         wrappers.add(wrapperIdentifier);
     };
 
-    const { defaultExport, ...otherExports } = exportMap;
-
-    if (defaultExport) {
-        if (!hasDefaultExport()) {
-            this.emitWarning(
-                `wrap-js-loader: Cannot wrap default export of "${
-                    this.resourcePath
-                }" with modules "${JSON.stringify(
-                    defaultExport
-                )}" because it does not have a default export.`
-            );
-        } else {
-            defaultExport.forEach(wrapperModule => {
+    for (const { wrapperModule, exportName, defaultExport } of this.query) {
+        if (defaultExport) {
+            if (!hasDefaultExport()) {
+                this.emitWarning(
+                    `wrap-js-loader: Cannot wrap default export of "${
+                        this.resourcePath
+                    }" with module "${wrapperModule}" because it does not have a default export.`
+                );
+            } else {
                 const wrapperIdentifier = addImport(wrapperModule);
                 wrapDefaultExport(wrapperIdentifier);
-            });
-        }
-    }
-
-    for (const [exportName, wrappers] of Object.entries(otherExports)) {
-        if (!hasExport(exportName)) {
+            }
+        } else if (!hasExport(exportName)) {
             this.emitWarning(
                 `wrap-js-loader: Cannot wrap export "${exportName}" of "${
                     this.resourcePath
-                }" with modules "${JSON.stringify(
-                    wrappers
-                )}" because it does not have an export named "${exportName}".`
+                }" with module "${wrapperModule}" because it does not have an export named "${exportName}".`
             );
         } else {
-            wrappers.forEach(wrapperModule => {
-                const wrapperIdentifier = addImport(wrapperModule);
-                wrapExport(exportName, wrapperIdentifier);
-            });
+            const wrapperIdentifier = addImport(wrapperModule);
+            wrapExport(exportName, wrapperIdentifier);
         }
     }
 

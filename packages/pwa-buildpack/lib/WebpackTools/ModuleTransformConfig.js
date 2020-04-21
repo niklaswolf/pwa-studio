@@ -8,7 +8,7 @@ const path = require('path');
  * Instruction to the Webpack transform loader to pass a given file through a
  * transform function implemented in a given Node module, with an optional set
  * of configuration values that will be passed to the transform function.
- * @prop {string} [type] - Type of transform. Currently only 'babel' is supported.
+ * @prop {string} type - Type of transform. `'babel'` expects a Babel plugin as the `transformModule`. `"source"` expects a Webpack loader.
  * @prop {string} requestor - Name of the file doing the requesting.
  * @prop {string} fileToTransform - Relative path to the file in this module
  *   to be transformed when it is loaded by the compilation.
@@ -91,19 +91,28 @@ class ModuleTransformConfig {
      * Resolve paths and emit as JSON.
      */
     async toLoaderOptions() {
-        const babel = {};
+        const byType = {
+            babel: {},
+            source: {}
+        };
         // Some reqs may still be outstanding!
         (await Promise.all(this._reqs)).map(req => {
             // Split them up by the transform module to use.
             // Several requests will share one transform instance.
-            const xformMod = req.transformModule;
-            const targetFile = req.fileToTransform;
-            const filesForXform = babel[xformMod] || (babel[xformMod] = {});
+            const { type, transformModule, fileToTransform } = req;
+            const xformsForType = byType[type];
+            if (!xformsForType) {
+                throw new Error(`Unknown transform type "${type}"`);
+            }
+            const filesForXform =
+                xformsForType[transformModule] ||
+                (xformsForType[transformModule] = {});
             const requestsForFile =
-                filesForXform[targetFile] || (filesForXform[targetFile] = []);
+                filesForXform[fileToTransform] ||
+                (filesForXform[fileToTransform] = []);
             requestsForFile.push(req);
         });
-        return JSON.parse(JSON.stringify({ babel }));
+        return JSON.parse(JSON.stringify(byType));
     }
 }
 

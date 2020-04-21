@@ -29,7 +29,7 @@ test('runs sync interception methods on underlying tapable with default name arg
     expect(tapInfoSpy).toHaveBeenCalledWith(
         expect.objectContaining({
             type: 'sync',
-            name: 'mockPackage:BailIfAsked'
+            name: `mockPackage${Target.SOURCE_SEP}BailIfAsked`
         })
     );
 

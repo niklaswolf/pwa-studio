@@ -53,22 +53,40 @@ getModuleRules.js = async ({
         })
     );
 
+    const astLoaders = [
+        {
+            loader: 'babel-loader',
+            options: {
+                sourceMaps: mode === 'development' && 'inline',
+                envName: mode,
+                root: paths.root,
+                rootMode: babelRootMode,
+                overrides
+            }
+        }
+    ];
+
+    const sourceLoaders = Object.entries(transformRequests.source).map(
+        ([loader, requestsByFile]) => {
+            return {
+                test: Object.keys(requestsByFile),
+                use: [
+                    info => ({
+                        loader,
+                        options: requestsByFile[info.realResource].map(
+                            req => req.options
+                        )
+                    })
+                ]
+            };
+        }
+    );
+
     return {
         test: /\.(mjs|js|jsx)$/,
         include: [paths.src, ...hasFlag('esModules')],
         sideEffects: false,
-        use: [
-            {
-                loader: 'babel-loader',
-                options: {
-                    sourceMaps: mode === 'development' && 'inline',
-                    envName: mode,
-                    root: paths.root,
-                    rootMode: babelRootMode,
-                    overrides
-                }
-            }
-        ]
+        rules: [...astLoaders, ...sourceLoaders]
     };
 };
 

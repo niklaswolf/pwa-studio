@@ -5,7 +5,7 @@ const {
 const declare = require('../peregrine-declare');
 const intercept = require('../peregrine-intercept');
 
-test('declares a sync target talons and intercepts wrapEsModules', () => {
+test('declares a sync target talons and intercepts transformModules', () => {
     const targets = mockTargetProvider(
         '@magento/peregrine',
         (_, dep) =>
@@ -14,7 +14,7 @@ test('declares a sync target talons and intercepts wrapEsModules', () => {
                     specialFeatures: {
                         tap: jest.fn()
                     },
-                    wrapEsModules: {
+                    transformModules: {
                         tap: jest.fn()
                     }
                 }
@@ -30,7 +30,7 @@ test('declares a sync target talons and intercepts wrapEsModules', () => {
 
     intercept(targets);
     const buildpackTargets = targets.of('@magento/pwa-buildpack');
-    expect(buildpackTargets.wrapEsModules.tap).toHaveBeenCalled();
+    expect(buildpackTargets.transformModules.tap).toHaveBeenCalled();
 });
 
 test('enables third parties to wrap talons', async () => {
@@ -40,11 +40,11 @@ test('enables third parties to wrap talons', async () => {
         declare() {},
         intercept(targets) {
             targets.of('@magento/peregrine').talons.tap(talons => {
-                talons.ProductFullDetail.useProductFullDetail.add(
+                talons.ProductFullDetail.useProductFullDetail.wrapWith(
                     'src/usePFDIntercept'
                 );
-                talons.App.useApp.add('src/useAppIntercept');
-                talons.App.useApp.add('src/swedish');
+                talons.App.useApp.wrapWith('src/useAppIntercept');
+                talons.App.useApp.wrapWith('src/swedish');
             });
         }
     };

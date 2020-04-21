@@ -9,8 +9,7 @@
  *
  * @module Buildpack/Targets
  */
-const ModuleTransformConfig = require('../WebpackTools/ModuleTransformConfig');
-const { SOURCE_SEP } = require('@magento/pwa-buildpack/lib/BuildBus/Target');
+const { SOURCE_SEP } = require('./Target');
 module.exports = targets => {
     const builtins = {
         /**
@@ -48,31 +47,36 @@ module.exports = targets => {
         envVarDefinitions: new targets.types.Sync(['definitions']),
 
         /**
-         * @callback transformModuleIntercept
-         * @param {ModuleLoaderInterceptors} wrappers - Wrapper configuration API to
-         *   register wrapper functions on the module files they should wrap.
-         * @returns {ModuleLoaderInterceptors} - Interceptors must return a config
-         *   object, either by modifying and returning the argument or by
-         *   generating and returning a new one.
+         * @callback addTransform
+         * @param {Buildpack/WebpackTools~TransformRequest} transformRequest -
+         *   Request to apply a transform to a file provided by this dependency.
          */
 
         /**
-         * Collects requests to intercept and "wrap" individual JavaScript
-         * module files in decorator functions. With `wrapEsModules` an
-         * extension can enhance or modify the behavior of any other file in
-         * the project. **This is a very low-level extension point; it should
-         * be used as a building block for higher-level extensions that expose
-         * functional areas rather than files on disk.**
+         * @callback transformModuleIntercept
+         * @param {addTransform} addTransform - Callback to add a transform.
+         * @returns {undefined} - Interceptors of `transformModules` should call
+         *   the `addTransform()` callback. Any returned value will be ignored.
+         */
+
+        /**
+         * Collects requests to intercept and modify individual files from this
+         * dependency. Only files from the currently requesting dependency may
+         * be transformed.
+         * **This is a very low-level extension point; it should be used as a
+         * building block for higher-level extensions that expose functional
+         * areas rather than files on disk.**
          *
-         * @type {webpack.SyncWaterfallHook}
+         * @type {webpack.SyncHook}
          * @param {transformModuleIntercept}
          *
-         * @example <caption>Increment a number exported by some file.</caption>
-         * targets.of('@magento/pwa-buildpack').wrapEsModules.tap(wrappers => {
-         *   wrappers
-         *     .getWrappersForExport('@other-module/path/to/someFile', 'answer')
-         *     .add('./targets/decorators/increment.js')
-         * })
+         * @example <caption>Strip unnecessary Lodash code from a specific JS module.</caption>
+         * targets.of('@magento/pwa-buildpack').transformModules.tap(addTransform => addTransform({
+         *   type: 'babel',
+         *   fileToTransform: './lib/uses-pipeline-syntax.js',
+         *   transformModule: 'babel-plugin-lodash',
+         *   options: { id: ["async", "lodash-bound" ]}
+         * }));
          */
         transformModules: new targets.types.Sync(['requestTransform']),
 
@@ -139,16 +143,27 @@ module.exports = targets => {
      * own module root.
      */
     builtins.transformModules.intercept({
+        /**
+         * With the "register" meta-interceptor, we can mess with the arguments
+         * that subsequent interceptors receive.
+         */
         register: tapInfo => {
             /**
-             * Expects the module name set by Target. If something has cheated
-             * and directly tapped the underlying tapable, it'll just be the
-             * name they passed and might not resolve to a real module.
+             * Get the requestor module out of the module name set by Target.
+             * If something has cheated and directly tapped the underlying
+             * tapable, it'll just be the name they passed and might not
+             * resolve to a real module.
              */
             const requestor = tapInfo.name.split(SOURCE_SEP)[0];
+
+            // Reference to the original callback that the interceptor passed.
             const callback = tapInfo.fn;
             return {
+                // Make a new tap object,
                 ...tapInfo,
+                // which calls each interceptor with a slightly different arg.
+                // We know that transformModules receives a function as its
+                // first argument. So we expect it and bind it.
                 fn: (requestTransform, ...args) => {
                     const requestOwnModuleTransform = request =>
                         requestTransform({ ...request, requestor });

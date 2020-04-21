@@ -12,11 +12,14 @@ const path = require('path');
  */
 function TalonWrapperConfig(addTransforms) {
     const wrappable = (talonFile, exportName) => ({
-        wrapWith: transformModule =>
+        wrapWith: wrapperModule =>
             addTransforms({
+                type: 'source',
                 fileToTransform: path.join('./lib/talons/', talonFile),
-                transformModule,
+                transformModule:
+                    '@magento/pwa-buildpack/lib/WebpackTools/loaders/wrap-esm-loader',
                 options: {
+                    wrapperModule,
                     exportName
                 }
             })
@@ -51,7 +54,7 @@ module.exports = targets => {
      * higher-level targets for named and namespaced talons, instead of the
      * file paths directly.
      * Pass that higher-level config through `talons` interceptors, so they can
-     * add wrappers for the talon modules without tapping the `wrapEsModules`
+     * add wrappers for the talon modules without tapping the `transformModules`
      * config themselves.
      */
     builtins.transformModules.tap(addTransform => {

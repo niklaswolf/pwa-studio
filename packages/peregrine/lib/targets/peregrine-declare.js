@@ -20,20 +20,26 @@ module.exports = targets => {
          * output of those talons.
          *
          * This target is a convenience wrapper around the
-         * `@magento/pwa-buildpack` target `wrapEsModules`. That target uses
-         * filenames, which are not guaranteed to be semantically versioned.
+         * `@magento/pwa-buildpack` target `transformModules`. That target uses
+         * filenames, which are not guaranteed to be semantically versioned or
+         * to be readable APIs.
          * This target publishes talons as functions to wrap, rather than as
          * files to decorate.
          *
          * @type {webpack.SyncHook}
          * @param {talonIntercept}
          *
-         * @example <caption>Increment a number exported by some file.</caption>
-         * targets.of('@magento/pwa-buildpack').wrapEsModules.tap(wrappers => {
-         *   wrappers
-         *     .getWrappersForExport('@other-module/path/to/someFile', 'answer')
-         *     .add('./targets/decorators/increment.js')
+         * @example <caption>Log whenever the `useApp()` hook runs.</caption>
+         * targets.of('@magento/pwa-buildpack').talons.tap(talons => {
+         *   talons.App.useApp.wrapWith('./log-wrapper');
          * })
+         * // log-wrapper.js:
+         * export default function wrapUseApp(original) {
+         *   return function useApp(...args) {
+         *     console.log('calling useApp with', ...args);
+         *     return original(...args);
+         *   }
+         * }
          */
         talons: new targets.types.Sync(['talons'])
     });

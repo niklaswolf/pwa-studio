@@ -13,14 +13,14 @@ const squareToCube = './__fixtures__/square-to-cube.es6';
 
 const requireModule = content => evalEsModule(content, require);
 
-const runWrapLoader = async (wrap, source = mathSource) =>
+const runWrapLoader = async (query, source = mathSource) =>
     runLoader(wrapEsmLoader, source, {
-        query: { wrap: { foo: wrap } },
+        query,
         resourcePath: 'foo'
     });
 
 test('does nothing if no export map was provided for this resource path', async () => {
-    const { output } = await runWrapLoader();
+    const { output } = await runWrapLoader([]);
     expect(output).toEqual(mathSource);
     const square = requireModule(output);
     expect(square(4)).toBe(16);
@@ -30,9 +30,12 @@ test('wraps default export', async () => {
     const {
         output,
         context: { emitWarning, addDependency }
-    } = await runWrapLoader({
-        defaultExport: [squareToCube]
-    });
+    } = await runWrapLoader([
+        {
+            defaultExport: true,
+            wrapperModule: squareToCube
+        }
+    ]);
     const cube = requireModule(output);
     expect(cube(4)).toBe(64);
     expect(emitWarning).not.toHaveBeenCalled();
@@ -43,9 +46,12 @@ test('wraps named exports', async () => {
     const {
         output,
         context: { emitWarning, addDependency }
-    } = await runWrapLoader({
-        multiply: [printAsBinary]
-    });
+    } = await runWrapLoader([
+        {
+            exportName: 'multiply',
+            wrapperModule: printAsBinary
+        }
+    ]);
     const cube = requireModule(output);
     expect(cube(4)).toBe('10000');
     expect(emitWarning).not.toHaveBeenCalled();
@@ -56,9 +62,16 @@ test('wraps exports multiple times', async () => {
     const {
         output,
         context: { emitWarning, addDependency }
-    } = await runWrapLoader({
-        multiply: [printAsBinary, speakBinary]
-    });
+    } = await runWrapLoader([
+        {
+            exportName: 'multiply',
+            wrapperModule: printAsBinary
+        },
+        {
+            exportName: 'multiply',
+            wrapperModule: speakBinary
+        }
+    ]);
     const square = requireModule(output);
     expect(square(4)).toBe('one zero zero zero zero');
     expect(emitWarning).not.toHaveBeenCalled();
@@ -70,11 +83,14 @@ test('wraps multiple exports', async () => {
     const {
         output,
         context: { emitWarning }
-    } = await runWrapLoader({
-        add: [addBadly],
-        multiply: [printAsBinary],
-        defaultExport: [speakBinary]
-    });
+    } = await runWrapLoader([
+        { exportName: 'add', wrapperModule: addBadly },
+        { exportName: 'multiply', wrapperModule: printAsBinary },
+        {
+            defaultExport: true,
+            wrapperModule: speakBinary
+        }
+    ]);
     const square = requireModule(output);
     expect(square(4)).toBe('one one zero one');
     expect(emitWarning).not.toHaveBeenCalled();
@@ -84,10 +100,10 @@ test('reuses imports', async () => {
     const {
         output,
         context: { emitWarning }
-    } = await runWrapLoader({
-        add: [printAsBinary],
-        multiply: [printAsBinary]
-    });
+    } = await runWrapLoader([
+        { exportName: 'add', wrapperModule: printAsBinary },
+        { exportName: 'multiply', wrapperModule: printAsBinary }
+    ]);
     const { add, multiply } = requireModule(output);
     expect(add(2, 3)).toBe('101');
     expect(multiply(2, 3)).toBe('110');
@@ -99,9 +115,12 @@ test('warns if anything on export map does not apply', async () => {
     const {
         output,
         context: { emitWarning }
-    } = await runWrapLoader({
-        notARealExport: [squareToCube]
-    });
+    } = await runWrapLoader([
+        {
+            exportName: 'notARealExport',
+            wrapperModule: squareToCube
+        }
+    ]);
     const square = requireModule(output);
     expect(square(4)).toBe(16);
     expect(emitWarning).toHaveBeenCalledWith(
@@ -114,11 +133,11 @@ test('warns if default export does not apply', async () => {
         output,
         context: { emitWarning }
     } = await runWrapLoader(
-        {
-            add: [addBadly],
-            defaultExport: [squareToCube],
-            fortyTwo: [printAsBinary]
-        },
+        [
+            { defaultExport: true, wrapperModule: squareToCube },
+            { exportName: 'add', wrapperModule: addBadly },
+            { exportName: 'fortyTwo', wrapperModule: printAsBinary }
+        ],
         'export const fortyTwo = () => 42'
     );
     const answer = requireModule(output).fortyTwo();
@@ -132,17 +151,4 @@ test('warns if default export does not apply', async () => {
         2,
         expect.stringContaining('Cannot wrap export "add"')
     );
-});
-
-test('does nothing if nothing applied', async () => {
-    const {
-        output,
-        context: { emitWarning }
-    } = await runWrapLoader({
-        multiply: []
-    });
-    expect(output).toBe(mathSource);
-    const cube = requireModule(output);
-    expect(cube(4)).toBe(16);
-    expect(emitWarning).not.toHaveBeenCalled();
 });

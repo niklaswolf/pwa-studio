@@ -31,12 +31,13 @@ pkgDir.mockImplementation(x => x);
 
 const specialFeaturesHook = new SyncHook(['special']);
 const envVarDefsHook = new SyncHook(['envVarDefs']);
+const transformModulesHook = new SyncHook(['addTransform']);
 declareBase.mockImplementation(targets => {
     targets.declare({
         envVarDefinitions: envVarDefsHook,
         specialFeatures: specialFeaturesHook,
         webpackCompiler: new SyncHook(['compiler']),
-        wrapEsModules: new SyncWaterfallHook(['blorf'])
+        transformModules: transformModulesHook
     });
 });
 
