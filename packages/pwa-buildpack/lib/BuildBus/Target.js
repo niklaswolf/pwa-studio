@@ -21,6 +21,9 @@ const interceptionTypes = {
  * @extends {Trackable}
  */
 class Target extends Trackable {
+    static get SOURCE_SEP() {
+        return '::';
+    }
     constructor(owner, requestor, targetName, tapableType, tapable) {
         super();
         this._owner = owner;
@@ -32,17 +35,31 @@ class Target extends Trackable {
         this._populateFlags();
     }
     /** @ignore */
-    _invokeTap(method, customName, tap) {
-        let interceptor = tap;
-        let source = this._requestor;
-        if (interceptor) {
-            // a custom name was passed!
-            source = `${this._requestor}:${customName}`;
+    _invokeTap(method, info, fn) {
+        const tap = {
+            name: this._requestor
+        };
+        let customName;
+        if (typeof info === 'object') {
+            // a tapInfo object was passed!
+            customName = info.name;
+            Object.assign(tap, info);
+        } else if (fn) {
+            // a custom name and tap function were passed!
+            customName = info;
+            tap.fn = fn;
         } else {
-            interceptor = customName;
+            // a tap function was passed with no custom name
+            tap.fn = info;
         }
-        this.track('intercept', { source, type: interceptionTypes[method] });
-        return this._tapable[method](source, interceptor);
+        if (customName) {
+            tap.name += Target.SOURCE_SEP + customName;
+        }
+        this.track('intercept', {
+            source: this._requestor,
+            type: interceptionTypes[method]
+        });
+        return this._tapable[method](tap);
     }
     /** @ignore */
     _populateFlags() {

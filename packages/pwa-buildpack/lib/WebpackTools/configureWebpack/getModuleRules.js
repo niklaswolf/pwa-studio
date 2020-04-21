@@ -1,7 +1,6 @@
 /**
  * @module Buildpack/WebpackTools
  */
-const WrapLoaderConfig = require('../WrapLoaderConfig');
 
 /**
  * Create a Webpack
@@ -11,13 +10,13 @@ const WrapLoaderConfig = require('../WrapLoaderConfig');
  * @param {Buildpack/WebpackTools~WebpackConfigHelper} helper
  * @returns {Object[]} Array of Webpack rules.
  */
-function getModuleRules(helper) {
-    return [
+async function getModuleRules(helper) {
+    return Promise.all([
         getModuleRules.graphql(helper),
         getModuleRules.js(helper),
         getModuleRules.css(helper),
         getModuleRules.files(helper)
-    ];
+    ]);
 }
 
 /**
@@ -25,7 +24,7 @@ function getModuleRules(helper) {
  * @returns Rule object for Webpack `module` configuration which parses
  *   `.graphql` files
  */
-getModuleRules.graphql = ({ paths, hasFlag }) => ({
+getModuleRules.graphql = async ({ paths, hasFlag }) => ({
     test: /\.graphql$/,
     include: [paths.src, ...hasFlag('graphqlQueries')],
     use: [
@@ -40,35 +39,45 @@ getModuleRules.graphql = ({ paths, hasFlag }) => ({
  * @returns Rule object for Webpack `module` configuration which parses
  *   JavaScript files
  */
-getModuleRules.js = ({ mode, paths, hasFlag, babelRootMode, bus }) => ({
-    test: /\.(mjs|js|jsx)$/,
-    include: [paths.src, ...hasFlag('esModules')],
-    sideEffects: false,
-    use: [
-        {
-            loader: 'babel-loader',
-            options: {
-                envName: mode,
-                root: paths.root,
-                rootMode: babelRootMode
+getModuleRules.js = async ({
+    mode,
+    paths,
+    hasFlag,
+    babelRootMode,
+    transformRequests
+}) => {
+    const overrides = Object.entries(transformRequests.babel).map(
+        ([plugin, requestsByFile]) => ({
+            test: Object.keys(requestsByFile),
+            plugins: [[plugin, { requestsByFile }]]
+        })
+    );
+
+    return {
+        test: /\.(mjs|js|jsx)$/,
+        include: [paths.src, ...hasFlag('esModules')],
+        sideEffects: false,
+        use: [
+            {
+                loader: 'babel-loader',
+                options: {
+                    sourceMaps: mode === 'development' && 'inline',
+                    envName: mode,
+                    root: paths.root,
+                    rootMode: babelRootMode,
+                    overrides
+                }
             }
-        },
-        {
-            loader: 'wrap-esm-loader',
-            options: bus
-                .getTargetsOf('@magento/pwa-buildpack')
-                .wrapEsModules.call(new WrapLoaderConfig())
-                .toLoaderOptions()
-        }
-    ]
-});
+        ]
+    };
+};
 
 /**
  * @param {Buildpack/WebpackTools~WebpackConfigHelper} helper
  * @returns Rule object for Webpack `module` configuration which parses
  *   CSS files
  */
-getModuleRules.css = ({ paths, hasFlag }) => ({
+getModuleRules.css = async ({ paths, hasFlag }) => ({
     test: /\.css$/,
     oneOf: [
         {
@@ -104,7 +113,7 @@ getModuleRules.css = ({ paths, hasFlag }) => ({
  * @returns Rule object for Webpack `module` configuration which parses
  *   and inlines binary files below a certain size
  */
-getModuleRules.files = () => ({
+getModuleRules.files = async () => ({
     test: /\.(jpg|svg|png)$/,
     use: [
         {

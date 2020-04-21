@@ -32,7 +32,7 @@ async function getClientConfig(opts) {
         vendor,
         projectConfig,
         stats,
-        resolve
+        resolver
     } = opts;
 
     let vendorTest = '[\\/]node_modules[\\/]';
@@ -59,9 +59,9 @@ async function getClientConfig(opts) {
             chunkFilename: '[name].[chunkhash].js'
         },
         module: {
-            rules: getModuleRules(opts)
+            rules: await getModuleRules(opts)
         },
-        resolve,
+        resolve: resolver.config,
         resolveLoader: getResolveLoader(),
         plugins: [
             new RootComponentsPlugin({

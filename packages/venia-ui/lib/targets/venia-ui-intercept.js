@@ -71,4 +71,45 @@ module.exports = targets => {
             )
         )
     );
+
+    builtins.transformModules.tap(addTransform => {
+        addTransform({
+            type: 'babel',
+            fileToTransform:
+                '@magento/venia-ui/lib/components/Routes/routes.js',
+            transformModule:
+                '@magento/venia-ui/lib/targets/BabelRouteInjectionPlugin',
+            options: {
+                routes: targets.own.routes.call([])
+            }
+        });
+    });
+
+    targets.own.routes.tap(routes => [
+        ...routes,
+        {
+            name: 'Cart',
+            pattern: '/cart',
+            exact: true,
+            path: '../CartPage'
+        },
+        {
+            name: 'Search',
+            pattern: '/search.html',
+            exact: true,
+            path: '../../RootComponents/Search'
+        },
+        {
+            name: 'CreateAccountPage',
+            pattern: '/create-account',
+            exact: true,
+            path: '../CreateAccountPage'
+        },
+        {
+            name: 'CheckoutPage',
+            pattern: '/checkout',
+            exact: true,
+            path: '../CheckoutPage'
+        }
+    ]);
 };

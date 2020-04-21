@@ -20,6 +20,7 @@ function getServiceWorkerConfig({
     babelRootMode,
     hasFlag,
     projectConfig,
+    resolver,
     stats
 }) {
     debug('Creating service worker config');
@@ -55,6 +56,7 @@ function getServiceWorkerConfig({
                 }
             ]
         },
+        resolve: resolver.config,
         plugins: [
             new ServiceWorkerPlugin({
                 mode,

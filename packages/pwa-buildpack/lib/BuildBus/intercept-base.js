@@ -8,5 +8,4 @@ module.exports = targets => {
         defs.sections.push(...sections);
         defs.changes.push(...changes);
     });
-    targets.own.wrapEsModules.tap(config => config);
 };

@@ -15,6 +15,7 @@ const getSpecialFlags = require('./getSpecialFlags');
 const MagentoResolver = require('../MagentoResolver');
 const BuildBus = require('../../BuildBus');
 const BuildBusPlugin = require('../plugins/BuildBusPlugin');
+const ModuleTransformConfig = require('../ModuleTransformConfig');
 
 /**
  * Helps convert PWA Studio Buildpack settings and project properties into
@@ -37,6 +38,10 @@ const BuildBusPlugin = require('../plugins/BuildBusPlugin');
  *   the project being built.
  * @property {MagentoResolver} resolver - Module resolver function for this
  *   build
+ * @property {Object} transformRequests - Map of requests to apply loader
+ *   transforms to individual modules.
+ * @property {Object} transformRequests.babel - Map of individual ES modules to
+ *   requests to transform them via Babel.
  * @property {Buildpack/BuildBus.BuildBus} bus - {@link BuildBus} for the currently running task.
  *   Will be used to call build-specific targets.
  */
@@ -149,15 +154,18 @@ async function configureWebpack(options) {
         resolverOpts.alias = { ...options.alias };
     }
 
-    const magentoResolver = new MagentoResolver(resolverOpts);
+    const resolver = new MagentoResolver(resolverOpts);
 
-    const hasFlag = await getSpecialFlags(
-        options.special,
-        bus,
-        magentoResolver
-    );
+    const hasFlag = await getSpecialFlags(options.special, bus, resolver);
 
     const mode = getMode(options.env, projectConfig);
+
+    const transforms = new ModuleTransformConfig(resolver);
+    bus.getTargetsOf('@magento/pwa-buildpack').transformModules.call(x =>
+        transforms.add(x)
+    );
+    const transformRequests = await transforms.toLoaderOptions();
+
     const configHelper = {
         mode,
         context,
@@ -165,8 +173,9 @@ async function configureWebpack(options) {
         paths,
         hasFlag,
         projectConfig,
-        resolve: magentoResolver.config,
+        resolver,
         stats,
+        transformRequests,
         bus
     };
 

@@ -60,7 +60,7 @@ async function buildModuleWith(
         src: path.resolve(context, 'src')
     };
 
-    const magentoResolver = new MagentoResolver({ paths });
+    const resolver = new MagentoResolver({ paths });
 
     let entry;
     // Most of the time, the entry module is a real file.
@@ -69,13 +69,13 @@ async function buildModuleWith(
     if (mockFiles[moduleUnderTest]) {
         entry = moduleUnderTest;
     } else {
-        entry = await magentoResolver.resolve(moduleUnderTest);
+        entry = await resolver.resolve(moduleUnderTest);
     }
 
     const hasFlag = await getSpecialFlags(
         otherWebpackSettings.special || {},
         bus,
-        magentoResolver
+        resolver
     );
 
     const helper = {
@@ -83,7 +83,8 @@ async function buildModuleWith(
         hasFlag,
         babelRootMode: 'upward',
         mode: 'test',
-        paths
+        paths,
+        resolver
     };
 
     // Leave most modules external, so Webpack builds faster.
@@ -113,15 +114,15 @@ async function buildModuleWith(
         },
         module: {
             rules: [
-                getModuleRules.graphql(helper),
-                getModuleRules.js(helper),
+                await getModuleRules.graphql(helper),
+                await getModuleRules.js(helper),
                 {
                     test: /\.css$/,
                     use: ['identity-obj-proxy-loader']
                 }
             ]
         },
-        resolve: magentoResolver.config,
+        resolve: resolver.config,
         resolveLoader: getResolveLoader(),
         externals,
         ...otherWebpackSettings

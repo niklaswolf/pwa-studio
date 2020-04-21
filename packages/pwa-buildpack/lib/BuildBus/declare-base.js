@@ -9,8 +9,10 @@
  *
  * @module Buildpack/Targets
  */
+const ModuleTransformConfig = require('../WebpackTools/ModuleTransformConfig');
+const { SOURCE_SEP } = require('@magento/pwa-buildpack/lib/BuildBus/Target');
 module.exports = targets => {
-    targets.declare({
+    const builtins = {
         /**
          * @callback envVarIntercept
          * @param {Object} defs - The envVarDefinitions.json structure.
@@ -46,10 +48,10 @@ module.exports = targets => {
         envVarDefinitions: new targets.types.Sync(['definitions']),
 
         /**
-         * @callback wrapModuleIntercept
-         * @param {WrapLoaderConfig} wrappers - Wrapper configuration API to
+         * @callback transformModuleIntercept
+         * @param {ModuleLoaderInterceptors} wrappers - Wrapper configuration API to
          *   register wrapper functions on the module files they should wrap.
-         * @returns {WrapLoaderConfig} - Interceptors must return a config
+         * @returns {ModuleLoaderInterceptors} - Interceptors must return a config
          *   object, either by modifying and returning the argument or by
          *   generating and returning a new one.
          */
@@ -63,7 +65,7 @@ module.exports = targets => {
          * functional areas rather than files on disk.**
          *
          * @type {webpack.SyncWaterfallHook}
-         * @param {wrapModuleIntercept}
+         * @param {transformModuleIntercept}
          *
          * @example <caption>Increment a number exported by some file.</caption>
          * targets.of('@magento/pwa-buildpack').wrapEsModules.tap(wrappers => {
@@ -72,7 +74,7 @@ module.exports = targets => {
          *     .add('./targets/decorators/increment.js')
          * })
          */
-        wrapEsModules: new targets.types.SyncWaterfall(['wrapRequests']),
+        transformModules: new targets.types.Sync(['requestTransform']),
 
         /**
          * @callback webpackCompilerIntercept
@@ -119,9 +121,42 @@ module.exports = targets => {
          * })
          *
          *
-         * @see {@link configureWebpack}
+         * @see {configureWebpack}
          * @type {webpack.SyncHook}
          */
         specialFeatures: new targets.types.Sync(['special'])
+    };
+
+    /**
+     * Special behavior for the `transformModules` target: interceptors should
+     * only be able to transform _their own code_, for proper encapsulation and
+     * compatibility. So their transform requests will provide relative paths
+     * to the files to be transformed, and the requestTransforms callback will
+     * enforce the module root. In order to do that, we have to have slightly
+     * different private state for each invocation of an interceptor. Tapable
+     * doesn't do that by default, so we use a meta-interceptor to bind every
+     * subsequently registered interceptor to its own callback, bound to its
+     * own module root.
+     */
+    builtins.transformModules.intercept({
+        register: tapInfo => {
+            /**
+             * Expects the module name set by Target. If something has cheated
+             * and directly tapped the underlying tapable, it'll just be the
+             * name they passed and might not resolve to a real module.
+             */
+            const requestor = tapInfo.name.split(SOURCE_SEP)[0];
+            const callback = tapInfo.fn;
+            return {
+                ...tapInfo,
+                fn: (requestTransform, ...args) => {
+                    const requestOwnModuleTransform = request =>
+                        requestTransform({ ...request, requestor });
+                    return callback(requestOwnModuleTransform, ...args);
+                }
+            };
+        }
     });
+
+    targets.declare(builtins);
 };

@@ -2,54 +2,36 @@
  * @module Peregrine/Targets
  */
 const path = require('path');
-const WrapLoaderConfig = require('@magento/pwa-buildpack/lib/WebpackTools/WrapLoaderConfig');
 
 /**
  *
  *
  * @class TalonWrapperConfig
- * @extends {WrapLoaderConfig}
+ * @extends {ModuleLoaderInterceptors}
  * @hideconstructor
  */
-class TalonWrapperConfig extends WrapLoaderConfig {
-    /**
-     * @private
-     */
-    getWrappersForExport(modulePath, ...rest) {
-        return super.getWrappersForExport(
-            path.resolve(__dirname, '../talons/', modulePath),
-            ...rest
-        );
-    }
-    get ProductFullDetail() {
-        return {
-            /**
-             * @type {Set}
-             * Paths to all the interceptors that will wrap the `ProductFullDetail/useProductFullDetail`
-             * talon. They will execute in order as a composed function.
-             *
-             * @readonly
-             * @memberof TalonWrapperConfig.ProductFullDetail
-             */
-            useProductFullDetail: this.getWrappersForExport(
-                'ProductFullDetail/useProductFullDetail.js',
+function TalonWrapperConfig(addTransforms) {
+    const wrappable = (talonFile, exportName) => ({
+        wrapWith: transformModule =>
+            addTransforms({
+                fileToTransform: path.join('./lib/talons/', talonFile),
+                transformModule,
+                options: {
+                    exportName
+                }
+            })
+    });
+    return {
+        ProductFullDetail: {
+            useProductFullDetail: wrappable(
+                'ProductFullDetail/useProductFullDetail',
                 'useProductFullDetail'
             )
-        };
-    }
-    get App() {
-        return {
-            /**
-             * @type {Set}
-             * Paths to all the interceptors that will wrap the `useApp` talon. They
-             * will execute in order as a composed function.
-             *
-             * @readonly
-             * @memberof TalonWrapperConfig.App
-             */
-            useApp: this.getWrappersForExport('App/useApp.js', 'useApp')
-        };
-    }
+        },
+        App: {
+            useApp: wrappable('App/useApp', 'useApp')
+        }
+    };
 }
 
 module.exports = targets => {
@@ -63,9 +45,18 @@ module.exports = targets => {
         };
     });
 
-    builtins.wrapEsModules.tap(wrapConfig => {
-        const talonWrapperConfig = new TalonWrapperConfig(wrapConfig);
+    /**
+     * Tap the low-level Buildpack target for wrapping _any_ frontend module.
+     * Wrap the config object in a TalonWrapperConfig, which presents
+     * higher-level targets for named and namespaced talons, instead of the
+     * file paths directly.
+     * Pass that higher-level config through `talons` interceptors, so they can
+     * add wrappers for the talon modules without tapping the `wrapEsModules`
+     * config themselves.
+     */
+    builtins.transformModules.tap(addTransform => {
+        const talonWrapperConfig = new TalonWrapperConfig(addTransform);
+
         targets.own.talons.call(talonWrapperConfig);
-        return wrapConfig;
     });
 };
