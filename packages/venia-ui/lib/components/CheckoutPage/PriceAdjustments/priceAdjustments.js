@@ -12,7 +12,10 @@ import defaultClasses from './priceAdjustments.css';
 const PriceAdjustments = props => {
     const classes = mergeClasses(defaultClasses, props.classes);
 
-    const { setIsCartUpdating } = props;
+    const {
+        // TODO: implement fn in checkout page to disable buttons and blank summary
+        setIsCartUpdating = () => {}
+    } = props;
 
     return (
         <div className={classes.root}>
