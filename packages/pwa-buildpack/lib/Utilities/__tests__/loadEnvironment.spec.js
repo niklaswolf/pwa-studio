@@ -1,5 +1,4 @@
 jest.doMock('dotenv');
-jest.doMock('word-wrap', () => x => x);
 
 const debug = jest.fn().mockName('debug');
 jest.doMock('debug', () => () => debug);
