@@ -129,7 +129,11 @@ const CheckoutPage = props => {
 
         const paymentInformationSection =
             checkoutStep >= CHECKOUT_STEP.PAYMENT ? (
-                <PaymentInformation onSave={setPaymentInformationDone} />
+                <PaymentInformation
+                    pageIsUpdating={isUpdating}
+                    onSave={setPaymentInformationDone}
+                    setPageIsUpdating={setIsUpdating}
+                />
             ) : (
                 <h3 className={classes.payment_information_heading}>
                     {'3. Payment Information'}

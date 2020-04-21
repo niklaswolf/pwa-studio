@@ -6,7 +6,7 @@ import Button from '../../Button';
 import defaultClasses from './paymentInformation.css';
 
 const PaymentInformation = props => {
-    const { onSave } = props;
+    const { pageIsUpdating, onSave, setPageIsUpdating } = props;
     const classes = mergeClasses(defaultClasses, props.classes);
 
     // TODO: Replace "doneEditing" with a query for existing data.
@@ -29,7 +29,7 @@ const PaymentInformation = props => {
 
     const priceAdjustments = !doneEditing ? (
         <div className={classes.price_adjustments_container}>
-            <PriceAdjustments />
+            <PriceAdjustments setPageIsUpdating={setPageIsUpdating} />
         </div>
     ) : null;
 
@@ -38,6 +38,7 @@ const PaymentInformation = props => {
             onClick={handleClick}
             priority="high"
             className={classes.review_order_button}
+            disabled={pageIsUpdating}
         >
             {'Review Order'}
         </Button>

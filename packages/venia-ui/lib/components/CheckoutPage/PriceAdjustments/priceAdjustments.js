@@ -9,21 +9,23 @@ import GiftOptions from '../../CartPage/PriceAdjustments/GiftOptions';
 
 import defaultClasses from './priceAdjustments.css';
 
+/**
+ * PriceAdjustments component for the Checkout page.
+
+ * @param {Function} props.setPageIsUpdating callback that sets checkout page updating state
+ */
 const PriceAdjustments = props => {
     const classes = mergeClasses(defaultClasses, props.classes);
 
-    const {
-        // TODO: implement fn in checkout page to disable buttons and blank summary
-        setIsCartUpdating = () => {}
-    } = props;
+    const { setPageIsUpdating } = props;
 
     return (
         <div className={classes.root}>
             <Accordion canOpenMultiple={true}>
                 <Section id={'coupon_code'} title={'Enter Coupon Code'}>
-                    <CouponCode setIsCartUpdating={setIsCartUpdating} />
+                    <CouponCode setIsCartUpdating={setPageIsUpdating} />
                 </Section>
-                <GiftCardSection setIsCartUpdating={setIsCartUpdating} />
+                <GiftCardSection setIsCartUpdating={setPageIsUpdating} />
                 <Section id={'gift_options'} title={'See Gift Options'}>
                     <GiftOptions />
                 </Section>
