@@ -1,3 +1,6 @@
+/**
+ * @module VeniaUI/Targets
+ */
 const path = require('path');
 const loader = require.resolve('./rendererCollectionLoader');
 
@@ -15,9 +18,11 @@ const isRCR = mod =>
         '../components/RichContent/richContentRenderers.js'
     );
 
-// Webpack can process loaders best when each one has a unique identity.
-// We use thie filename, since there should only be one of these loaders
-// per compilation.
+/**
+ * Webpack can process loaders best when each one has a unique identity. We
+ * use the filename, since there should only be one of these loaders per
+ * compilation.
+ */
 const ident = __filename;
 
 const name = '@magento/venia-ui';
@@ -26,14 +31,6 @@ const name = '@magento/venia-ui';
 const loaderIsInstalled = mod => mod.loaders.some(l => l.ident === ident);
 
 module.exports = targets => {
-    const { richContentRenderers } = targets.own;
-    richContentRenderers.tap(api =>
-        api.add({
-            componentName: 'PlainHtmlRenderer',
-            importPath: './plainHtmlRenderer'
-        })
-    );
-
     const builtins = targets.of('@magento/pwa-buildpack');
 
     builtins.specialFeatures.tap(featuresByModule => {
@@ -58,7 +55,7 @@ module.exports = targets => {
                                 renderers.push(renderer);
                             }
                         };
-                        richContentRenderers.call(api);
+                        targets.own.richContentRenderers.call(api);
                         mod.loaders.push({
                             ident: ident,
                             loader,
@@ -72,6 +69,21 @@ module.exports = targets => {
         )
     );
 
+    // Dogfood our own richContentRenderer hook to insert the fallback renderer.
+    targets.own.richContentRenderers.tap(api =>
+        api.add({
+            componentName: 'PlainHtmlRenderer',
+            importPath: './plainHtmlRenderer'
+        })
+    );
+
+    /**
+     * Implementation of our `routes` target. When Buildpack runs
+     * `transformModules`, this interceptor will provide a nice API to
+     * consumers of `routes`: instead of specifying the transform file
+     * and the path to the routes component, you can just push route
+     * requests into a neat little array.
+     */
     builtins.transformModules.tap(addTransform => {
         addTransform({
             type: 'babel',

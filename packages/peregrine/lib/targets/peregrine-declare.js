@@ -3,7 +3,7 @@
  *
  * Their implementations are found in `./peregrine-intercept.js`.
  *
- * @module Peregrine
+ * @module Peregrine/Targets
  */
 module.exports = targets => {
     targets.declare({
@@ -28,7 +28,7 @@ module.exports = targets => {
          * This target publishes talons as functions to wrap, rather than as
          * files to decorate.
          *
-         * @type {webpack.SyncHook}
+         * @type {tapable.SyncHook}
          * @param {talonIntercept}
          *
          * @example <caption>Log whenever the `useApp()` hook runs.</caption>

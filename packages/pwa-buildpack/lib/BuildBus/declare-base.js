@@ -26,7 +26,7 @@ module.exports = targets => {
          * integrate their configuration with the project-wide environment
          * variables system by tapping `envVarDefinitions`.
          *
-         * @type {webpack.SyncHook}
+         * @type {tapable.SyncHook}
          * @param {envVarIntercept} callback
          *
          * @example <caption>Add config fields for your extension</caption>
@@ -67,7 +67,7 @@ module.exports = targets => {
          * building block for higher-level extensions that expose functional
          * areas rather than files on disk.**
          *
-         * @type {webpack.SyncHook}
+         * @type {tapable.SyncHook}
          * @param {transformModuleIntercept}
          *
          * @example <caption>Strip unnecessary Lodash code from a specific JS module.</caption>
@@ -93,7 +93,7 @@ module.exports = targets => {
          * Calls interceptors whenever a Webpack Compiler object is created.
          * This almost always happens once per build, even in dev mode.
          *
-         * @type {webpack.SyncHook}
+         * @type {tapable.SyncHook}
          * @param {webpackCompilerIntercept} callback
          *
          * @example <caption>Tap the compiler's `watchRun` hook.</caption>
@@ -126,7 +126,7 @@ module.exports = targets => {
          *
          *
          * @see {configureWebpack}
-         * @type {webpack.SyncHook}
+         * @type {tapable.SyncHook}
          */
         specialFeatures: new targets.types.Sync(['special'])
     };
@@ -136,11 +136,18 @@ module.exports = targets => {
      * only be able to transform _their own code_, for proper encapsulation and
      * compatibility. So their transform requests will provide relative paths
      * to the files to be transformed, and the requestTransforms callback will
-     * enforce the module root. In order to do that, we have to have slightly
-     * different private state for each invocation of an interceptor. Tapable
-     * doesn't do that by default, so we use a meta-interceptor to bind every
-     * subsequently registered interceptor to its own callback, bound to its
-     * own module root.
+     * enforce the module root.
+     *
+     * Basically, when we call `transformModules`, we need to know what
+     * dependency each transform request is coming from, so we don't have to
+     * trust third-party code to mind its own business.
+     *
+     * In order to do that, we have to have slightly different private state
+     * for each invocation of an interceptor. Tapable doesn't do that by
+     * default, so we use a meta-interceptor to bind every subsequently
+     * registered interceptor to its own callback, bound to its own module root
+     * as an extra argument. Then, we can make sure all requested files for
+     * transform belong to the module doing the requesting.
      */
     builtins.transformModules.intercept({
         /**
@@ -159,14 +166,18 @@ module.exports = targets => {
             // Reference to the original callback that the interceptor passed.
             const callback = tapInfo.fn;
             return {
-                // Make a new tap object,
+                /**
+                 * Make a new tap object with a wrapped callback function. It
+                 * now calls each interceptor with a slightly different arg. We
+                 * know that transformModules receives a function as its first
+                 * argument. So we expect it and bind it.
+                 */
                 ...tapInfo,
-                // which calls each interceptor with a slightly different arg.
-                // We know that transformModules receives a function as its
-                // first argument. So we expect it and bind it.
                 fn: (requestTransform, ...args) => {
+                    // Ensure the request always has the right `requestor`.
                     const requestOwnModuleTransform = request =>
                         requestTransform({ ...request, requestor });
+                    // yoink!
                     return callback(requestOwnModuleTransform, ...args);
                 }
             };
